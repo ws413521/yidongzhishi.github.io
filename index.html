@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="中国移动业务科普网站 - 宽带、5G、智能家居、网络优化等实用知识一站式了解">
+  <meta name="theme-color" content="#00A650">
+  <title>移动业务科普 - 中国移动</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%2300A650'/%3E%3Cpath d='M8 12h2v8H8zm4-3h2v11h-2zm4 5h2v6h-2zm4-4h2v10h-2zm4 1h2v9h-2z' fill='white'/%3E%3C/svg%3E">
+
+  <!-- CSS -->
+  
+  <style>
+/* ===== 中国移动品牌设计令牌 ===== */
+:root {
+  --cm-primary: #00A650;
+  --cm-primary-dark: #00843D;
+  --cm-primary-light: #E8F5E9;
+  --cm-primary-gradient: linear-gradient(135deg, #00A650, #009A44);
+  --cm-secondary: #FF6B00;
+  --cm-accent: #2196F3;
+
+  --cm-white: #FFFFFF;
+  --cm-bg: #F5F7FA;
+  --cm-bg-card: #FFFFFF;
+  --cm-bg-hover: #F0FFF4;
+
+  --cm-text-primary: #1A1A2E;
+  --cm-text-secondary: #6B7280;
+  --cm-text-light: #9CA3AF;
+  --cm-text-white: #FFFFFF;
+
+  --cm-border: #E5E7EB;
+  --cm-border-light: #F0F0F0;
+
+  --cm-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --cm-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --cm-shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --cm-shadow-hover: 0 4px 16px rgba(0,166,80,0.15);
+
+  --cm-radius-xs: 4px;
+  --cm-radius-sm: 8px;
+  --cm-radius: 12px;
+  --cm-radius-lg: 16px;
+  --cm-radius-xl: 24px;
+
+  --cm-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --cm-font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --cm-font-size-xs: 12px;
+  --cm-font-size-sm: 14px;
+  --cm-font-size-base: 16px;
+  --cm-font-size-lg: 18px;
+  --cm-font-size-xl: 22px;
+  --cm-font-size-2xl: 28px;
+  --cm-font-size-3xl: 36px;
+
+  --cm-line-height: 1.75;
+  --cm-line-height-heading: 1.3;
+
+  --cm-space-xs: 4px;
+  --cm-space-sm: 8px;
+  --cm-space-md: 16px;
+  --cm-space-lg: 24px;
+  --cm-space-xl: 32px;
+  --cm-space-2xl: 48px;
+  --cm-space-3xl: 64px;
+
+  --cm-header-height: 64px;
+  --cm-max-width: 1200px;
+  --cm-content-max-width: 800px;
+}
+
+/* ===== 暗色模式（未来扩展） ===== */
+@media (prefers-color-scheme: dark) {
+  /* 暂不支持，但预留变量结构 */
+}
+
+/* ===== CSS Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--cm-font);
+  font-size: var(--cm-font-size-base);
+  line-height: var(--cm-line-height);
+  color: var(--cm-text-primary);
+  background: var(--cm-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+button { cursor: pointer; font: inherit; color: inherit; border: none; background: none; }
+input { font: inherit; color: inherit; }
+h1,h2,h3,h4,h5,h6 { line-height: var(--cm-line-height-heading); }
+
+/* ===== Layout System ===== */
+
+/* ---- Container ---- */
+.container {
+  max-width: var(--cm-max-width);
+  margin: 0 auto;
+  padding: 0 var(--cm-space-lg);
+}
+
+.container--narrow {
+  max-width: var(--cm-content-max-width);
+}
+
+/* ---- Header ---- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--cm-white);
+  border-bottom: 1px solid var(--cm-border-light);
+  height: var(--cm-header-height);
+  backdrop-filter: blur(12px);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: var(--cm-max-width);
+  margin: 0 auto;
+  padding: 0 var(--cm-space-lg);
+}
+
+.header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-sm);
+  font-size: var(--cm-font-size-lg);
+  font-weight: 700;
+  color: var(--cm-primary);
+  flex-shrink: 0;
+}
+
+.header__logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-xs);
+}
+
+.header__nav-link {
+  padding: var(--cm-space-sm) var(--cm-space-md);
+  border-radius: var(--cm-radius-sm);
+  font-size: var(--cm-font-size-sm);
+  color: var(--cm-text-secondary);
+  transition: var(--cm-transition);
+  white-space: nowrap;
+}
+
+.header__nav-link:hover,
+.header__nav-link--active {
+  color: var(--cm-primary);
+  background: var(--cm-primary-light);
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-sm);
+}
+
+.header__search-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cm-radius-sm);
+  color: var(--cm-text-secondary);
+  transition: var(--cm-transition);
+}
+
+.header__search-btn:hover {
+  color: var(--cm-primary);
+  background: var(--cm-primary-light);
+}
+
+.header__menu-btn {
+  display: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cm-radius-sm);
+  color: var(--cm-text-primary);
+}
+
+/* ---- Footer ---- */
+.footer {
+  background: #1A1A2E;
+  color: rgba(255,255,255,0.7);
+  padding: var(--cm-space-2xl) 0 var(--cm-space-lg);
+  margin-top: var(--cm-space-3xl);
+}
+
+.footer__inner {
+  max-width: var(--cm-max-width);
+  margin: 0 auto;
+  padding: 0 var(--cm-space-lg);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--cm-space-xl);
+  padding-bottom: var(--cm-space-xl);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: var(--cm-space-lg);
+}
+
+.footer__brand h3 {
+  font-size: var(--cm-font-size-xl);
+  color: var(--cm-white);
+  margin-bottom: var(--cm-space-sm);
+}
+
+.footer__brand p {
+  font-size: var(--cm-font-size-sm);
+}
+
+.footer__links h4 {
+  color: var(--cm-white);
+  font-size: var(--cm-font-size-base);
+  margin-bottom: var(--cm-space-md);
+}
+
+.footer__links a {
+  display: block;
+  font-size: var(--cm-font-size-sm);
+  margin-bottom: var(--cm-space-sm);
+  transition: var(--cm-transition);
+}
+
+.footer__links a:hover { color: var(--cm-primary); }
+
+.footer__bottom {
+  text-align: center;
+  font-size: var(--cm-font-size-xs);
+}
+
+/* ---- Mobile Nav Overlay ---- */
+.mobile-nav-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mobile-nav-overlay--visible {
+  opacity: 1;
+}
+
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  background: var(--cm-white);
+  z-index: 210;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  padding: var(--cm-space-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav--open { transform: translateX(0); }
+
+.mobile-nav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--cm-space-lg);
+}
+
+.mobile-nav__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cm-space-xs);
+}
+
+.mobile-nav__links a {
+  padding: var(--cm-space-md);
+  border-radius: var(--cm-radius-sm);
+  font-size: var(--cm-font-size-base);
+  transition: var(--cm-transition);
+}
+
+.mobile-nav__links a:hover {
+  background: var(--cm-primary-light);
+  color: var(--cm-primary);
+}
+
+.mobile-nav__close {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--cm-radius-sm);
+}
+
+/* ---- Back to Top ---- */
+.back-to-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 48px; height: 48px;
+  background: var(--cm-primary);
+  color: var(--cm-white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--cm-shadow-md);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: var(--cm-transition);
+  z-index: 50;
+}
+
+.back-to-top--visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--cm-primary-dark);
+  transform: translateY(0) scale(1.05);
+}
+
+/* ---- Main Content ---- */
+.main-content {
+  min-height: calc(100vh - var(--cm-header-height) - 300px);
+}
+
+/* ---- Section ---- */
+.section {
+  padding: var(--cm-space-2xl) 0;
+}
+
+.section__header {
+  text-align: center;
+  margin-bottom: var(--cm-space-xl);
+}
+
+.section__title {
+  font-size: var(--cm-font-size-2xl);
+  color: var(--cm-text-primary);
+  margin-bottom: var(--cm-space-sm);
+}
+
+.section__subtitle {
+  color: var(--cm-text-secondary);
+  font-size: var(--cm-font-size-lg);
+}
+
+/* ---- Card Grid ---- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--cm-space-lg);
+}
+
+.card-grid--sm {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+/* ===== Components Library ===== */
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cm-space-sm);
+  padding: 12px 24px;
+  border-radius: var(--cm-radius);
+  font-size: var(--cm-font-size-base);
+  font-weight: 600;
+  transition: var(--cm-transition);
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background: var(--cm-primary);
+  color: var(--cm-white);
+}
+
+.btn--primary:hover {
+  background: var(--cm-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,166,80,0.35);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--cm-primary);
+  border: 1.5px solid var(--cm-primary);
+}
+
+.btn--outline:hover {
+  background: var(--cm-primary-light);
+}
+
+.btn--lg {
+  padding: 14px 32px;
+  font-size: var(--cm-font-size-lg);
+  border-radius: var(--cm-radius-lg);
+}
+
+/* ---- Category Card ---- */
+.category-card {
+  background: var(--cm-bg-card);
+  border-radius: var(--cm-radius-lg);
+  padding: var(--cm-space-xl);
+  box-shadow: var(--cm-shadow);
+  transition: var(--cm-transition);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cm-space-md);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--cm-shadow-hover);
+  border-color: var(--cm-primary);
+}
+
+.category-card__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--cm-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: var(--cm-white);
+}
+
+.category-card__title {
+  font-size: var(--cm-font-size-xl);
+  font-weight: 700;
+  color: var(--cm-text-primary);
+}
+
+.category-card__desc {
+  color: var(--cm-text-secondary);
+  font-size: var(--cm-font-size-sm);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.category-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--cm-font-size-sm);
+  color: var(--cm-text-light);
+}
+
+.category-card__count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.category-card__arrow {
+  color: var(--cm-primary);
+  font-weight: 600;
+  font-size: var(--cm-font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Article Card ---- */
+.article-card {
+  background: var(--cm-bg-card);
+  border-radius: var(--cm-radius-lg);
+  padding: var(--cm-space-lg);
+  box-shadow: var(--cm-shadow-sm);
+  transition: var(--cm-transition);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cm-space-sm);
+  border: 1px solid var(--cm-border-light);
+}
+
+.article-card:hover {
+  box-shadow: var(--cm-shadow-hover);
+  border-color: var(--cm-primary);
+  transform: translateY(-2px);
+}
+
+.article-card__tags {
+  display: flex;
+  gap: var(--cm-space-xs);
+  flex-wrap: wrap;
+}
+
+.article-card__tag {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-primary);
+  background: var(--cm-primary-light);
+  font-weight: 500;
+}
+
+.article-card__title {
+  font-size: var(--cm-font-size-lg);
+  font-weight: 700;
+  color: var(--cm-text-primary);
+}
+
+.article-card__summary {
+  color: var(--cm-text-secondary);
+  font-size: var(--cm-font-size-sm);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.article-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-md);
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-text-light);
+}
+
+.article-card__read-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ---- Article List Item ---- */
+.article-list-item {
+  background: var(--cm-bg-card);
+  border-radius: var(--cm-radius);
+  padding: var(--cm-space-lg);
+  box-shadow: var(--cm-shadow-sm);
+  transition: var(--cm-transition);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cm-space-lg);
+  border: 1px solid transparent;
+  margin-bottom: var(--cm-space-md);
+}
+
+.article-list-item:hover {
+  border-color: var(--cm-primary);
+  box-shadow: var(--cm-shadow-hover);
+}
+
+.article-list-item__num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cm-primary-light);
+  color: var(--cm-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--cm-font-size-sm);
+  flex-shrink: 0;
+}
+
+.article-list-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.article-list-item__title {
+  font-size: var(--cm-font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--cm-space-xs);
+}
+
+.article-list-item__summary {
+  color: var(--cm-text-secondary);
+  font-size: var(--cm-font-size-sm);
+  margin-bottom: var(--cm-space-sm);
+}
+
+.article-list-item__meta {
+  display: flex;
+  gap: var(--cm-space-md);
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-text-light);
+  flex-wrap: wrap;
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-sm);
+  font-size: var(--cm-font-size-sm);
+  color: var(--cm-text-light);
+  margin-bottom: var(--cm-space-lg);
+  flex-wrap: wrap;
+}
+
+.breadcrumb a {
+  color: var(--cm-primary);
+  transition: var(--cm-transition);
+}
+
+.breadcrumb a:hover { color: var(--cm-primary-dark); }
+
+.breadcrumb__sep {
+  color: var(--cm-border);
+}
+
+/* ---- Tags ---- */
+.tags {
+  display: flex;
+  gap: var(--cm-space-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--cm-space-md);
+}
+
+.tag {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: var(--cm-font-size-xs);
+  background: var(--cm-primary-light);
+  color: var(--cm-primary);
+  font-weight: 500;
+}
+
+/* ---- Highlight / CTA Box ---- */
+.highlight-box {
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  border-left: 4px solid var(--cm-primary);
+  border-radius: var(--cm-radius);
+  padding: var(--cm-space-lg);
+  margin: var(--cm-space-lg) 0;
+}
+
+.highlight-box h4 {
+  color: var(--cm-primary-dark);
+  margin-bottom: var(--cm-space-sm);
+  font-size: var(--cm-font-size-base);
+}
+
+.cta-box {
+  background: linear-gradient(135deg, var(--cm-primary), var(--cm-primary-dark));
+  color: var(--cm-white);
+  border-radius: var(--cm-radius-lg);
+  padding: var(--cm-space-xl);
+  margin: var(--cm-space-xl) 0;
+  text-align: center;
+}
+
+.cta-box h3 {
+  font-size: var(--cm-font-size-xl);
+  margin-bottom: var(--cm-space-sm);
+}
+
+.cta-box p {
+  margin-bottom: var(--cm-space-md);
+  opacity: 0.9;
+}
+
+.cta-box .btn--outline {
+  color: var(--cm-white);
+  border-color: var(--cm-white);
+}
+
+/* ---- Sidebar ---- */
+.sidebar {
+  position: sticky;
+  top: calc(var(--cm-header-height) + 24px);
+}
+
+.sidebar__section {
+  background: var(--cm-bg-card);
+  border-radius: var(--cm-radius-lg);
+  padding: var(--cm-space-lg);
+  box-shadow: var(--cm-shadow-sm);
+  margin-bottom: var(--cm-space-lg);
+}
+
+.sidebar__title {
+  font-size: var(--cm-font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--cm-space-md);
+  padding-bottom: var(--cm-space-sm);
+  border-bottom: 2px solid var(--cm-primary-light);
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-sm);
+  padding: var(--cm-space-sm) var(--cm-space-sm);
+  border-radius: var(--cm-radius-sm);
+  font-size: var(--cm-font-size-sm);
+  color: var(--cm-text-secondary);
+  transition: var(--cm-transition);
+  margin-bottom: var(--cm-space-xs);
+}
+
+.sidebar__link:hover {
+  color: var(--cm-primary);
+  background: var(--cm-primary-light);
+}
+
+/* ---- Article Navigation ---- */
+.article-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--cm-space-md);
+  margin-top: var(--cm-space-2xl);
+  padding-top: var(--cm-space-xl);
+  border-top: 1px solid var(--cm-border);
+}
+
+.article-nav__link {
+  flex: 1;
+  max-width: 48%;
+  padding: var(--cm-space-md);
+  border-radius: var(--cm-radius);
+  background: var(--cm-bg-card);
+  border: 1px solid var(--cm-border-light);
+  transition: var(--cm-transition);
+}
+
+.article-nav__link:hover {
+  border-color: var(--cm-primary);
+  box-shadow: var(--cm-shadow-hover);
+}
+
+.article-nav__label {
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-text-light);
+  margin-bottom: 4px;
+}
+
+.article-nav__title {
+  font-size: var(--cm-font-size-sm);
+  font-weight: 600;
+  color: var(--cm-text-primary);
+}
+
+/* ---- Search Overlay ---- */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  padding-top: 15vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.search-overlay--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-overlay__inner {
+  width: 90%;
+  max-width: 640px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-overlay__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-md);
+  background: var(--cm-white);
+  border-radius: var(--cm-radius-lg);
+  padding: var(--cm-space-md) var(--cm-space-lg);
+  box-shadow: var(--cm-shadow-md);
+}
+
+.search-overlay__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: var(--cm-font-size-lg);
+  background: transparent;
+}
+
+.search-overlay__close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--cm-radius-sm);
+  flex-shrink: 0;
+}
+
+.search-overlay__results {
+  background: var(--cm-white);
+  border-radius: var(--cm-radius-lg);
+  margin-top: var(--cm-space-sm);
+  max-height: 50vh;
+  overflow-y: auto;
+  box-shadow: var(--cm-shadow-md);
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  padding: var(--cm-space-md) var(--cm-space-lg);
+  border-bottom: 1px solid var(--cm-border-light);
+  transition: var(--cm-transition);
+}
+
+.search-result-item:hover {
+  background: var(--cm-bg-hover);
+}
+
+.search-result-cat {
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-primary);
+  margin-bottom: 2px;
+}
+
+.search-result-title {
+  font-weight: 600;
+  font-size: var(--cm-font-size-base);
+  margin-bottom: 2px;
+}
+
+.search-result-summary {
+  font-size: var(--cm-font-size-xs);
+  color: var(--cm-text-light);
+}
+
+.search-empty {
+  text-align: center;
+  padding: var(--cm-space-2xl);
+  color: var(--cm-text-light);
+}
+
+.search-overlay__results mark {
+  background: #FFF3B0;
+  color: inherit;
+  border-radius: 2px;
+}
+
+/* ---- Hero ---- */
+.hero {
+  background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #F1F8E9 100%);
+  padding: var(--cm-space-3xl) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0,166,80,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40%;
+  left: -10%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(33,150,243,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--cm-max-width);
+  margin: 0 auto;
+  padding: 0 var(--cm-space-lg);
+}
+
+.hero__title {
+  font-size: var(--cm-font-size-3xl);
+  font-weight: 800;
+  color: var(--cm-text-primary);
+  margin-bottom: var(--cm-space-md);
+  line-height: 1.3;
+}
+
+.hero__title span {
+  color: var(--cm-primary);
+}
+
+.hero__subtitle {
+  font-size: var(--cm-font-size-lg);
+  color: var(--cm-text-secondary);
+  max-width: 600px;
+  margin: 0 auto var(--cm-space-xl);
+  line-height: 1.7;
+}
+
+.hero__actions {
+  display: flex;
+  gap: var(--cm-space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ---- Category Header ---- */
+.category-header {
+  background: linear-gradient(135deg, var(--cm-primary-light), #E8F5E9);
+  padding: var(--cm-space-2xl) 0;
+  text-align: center;
+}
+
+.category-header__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin: 0 auto var(--cm-space-md);
+  color: var(--cm-white);
+}
+
+.category-header__title {
+  font-size: var(--cm-font-size-2xl);
+  font-weight: 700;
+  color: var(--cm-text-primary);
+  margin-bottom: var(--cm-space-sm);
+}
+
+.category-header__desc {
+  color: var(--cm-text-secondary);
+  font-size: var(--cm-font-size-base);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* ---- Article Content ---- */
+.article-content h2 {
+  font-size: var(--cm-font-size-2xl);
+  color: var(--cm-text-primary);
+  margin: var(--cm-space-xl) 0 var(--cm-space-md);
+  padding-bottom: var(--cm-space-sm);
+  border-bottom: 2px solid var(--cm-primary-light);
+}
+
+.article-content h3 {
+  font-size: var(--cm-font-size-xl);
+  color: var(--cm-text-primary);
+  margin: var(--cm-space-lg) 0 var(--cm-space-sm);
+}
+
+.article-content p {
+  color: var(--cm-text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--cm-space-md);
+}
+
+.article-content ul, .article-content ol {
+  margin: var(--cm-space-md) 0;
+  padding-left: var(--cm-space-xl);
+}
+
+.article-content ul { list-style: disc; }
+.article-content ol { list-style: decimal; }
+
+.article-content li {
+  color: var(--cm-text-secondary);
+  line-height: 1.8;
+  margin-bottom: var(--cm-space-xs);
+}
+
+.article-content strong {
+  color: var(--cm-text-primary);
+}
+
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--cm-space-lg) 0;
+  font-size: var(--cm-font-size-sm);
+}
+
+.article-content th {
+  background: var(--cm-primary-light);
+  color: var(--cm-primary-dark);
+  padding: var(--cm-space-md);
+  text-align: left;
+  font-weight: 600;
+}
+
+.article-content td {
+  padding: var(--cm-space-md);
+  border-bottom: 1px solid var(--cm-border);
+  color: var(--cm-text-secondary);
+}
+
+.article-content tr:hover td {
+  background: var(--cm-bg-hover);
+}
+
+/* ===== Page Styles ===== */
+
+/* ---- Home Page ---- */
+.home-featured {
+  padding: var(--cm-space-2xl) 0;
+}
+
+.home-featured__title {
+  font-size: var(--cm-font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--cm-space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-sm);
+}
+
+.home-featured__title::before {
+  content: '';
+  width: 4px;
+  height: 24px;
+  background: var(--cm-primary);
+  border-radius: 2px;
+}
+
+/* ---- Category Page ---- */
+.category-page {
+  padding: var(--cm-space-xl) 0;
+}
+
+.category-page__layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--cm-space-xl);
+}
+
+.category-page__main {
+  min-width: 0;
+}
+
+/* ---- Article Page ---- */
+.article-page {
+  padding: var(--cm-space-xl) 0;
+}
+
+.article-header {
+  margin-bottom: var(--cm-space-xl);
+}
+
+.article-title {
+  font-size: var(--cm-font-size-2xl);
+  font-weight: 800;
+  color: var(--cm-text-primary);
+  margin-bottom: var(--cm-space-md);
+  line-height: 1.35;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--cm-space-md);
+  color: var(--cm-text-light);
+  font-size: var(--cm-font-size-sm);
+  flex-wrap: wrap;
+}
+
+.article-divider {
+  height: 1px;
+  background: var(--cm-border);
+  margin: var(--cm-space-xl) 0;
+}
+
+.article-content {
+  max-width: var(--cm-content-max-width);
+}
+
+/* ---- Search Page ---- */
+.search-page {
+  padding: var(--cm-space-xl) 0;
+  max-width: var(--cm-content-max-width);
+}
+
+.search-page__input {
+  width: 100%;
+  padding: var(--cm-space-md) var(--cm-space-lg);
+  font-size: var(--cm-font-size-lg);
+  border: 2px solid var(--cm-border);
+  border-radius: var(--cm-radius-lg);
+  outline: none;
+  transition: var(--cm-transition);
+  margin-bottom: var(--cm-space-lg);
+}
+
+.search-page__input:focus {
+  border-color: var(--cm-primary);
+  box-shadow: 0 0 0 3px rgba(0,166,80,0.1);
+}
+
+/* ---- Related Articles ---- */
+.related-articles {
+  margin-top: var(--cm-space-2xl);
+}
+
+.related-articles__title {
+  font-size: var(--cm-font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--cm-space-lg);
+}
+
+/* ===== Responsive Styles ===== */
+
+/* Tablet & below (≤ 768px) */
+@media (max-width: 768px) {
+  :root {
+    --cm-header-height: 56px;
+    --cm-font-size-3xl: 28px;
+    --cm-font-size-2xl: 24px;
+    --cm-font-size-xl: 20px;
+    --cm-font-size-lg: 17px;
+    --cm-space-3xl: 48px;
+    --cm-space-2xl: 32px;
+    --cm-space-xl: 24px;
+    --cm-space-lg: 16px;
+  }
+
+  .header__nav { display: none; }
+  .header__menu-btn { display: flex; }
+
+  .hero { padding: var(--cm-space-2xl) 0; }
+  .hero__subtitle { font-size: var(--cm-font-size-base); }
+  .hero__actions { flex-direction: column; align-items: center; }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-page__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar { position: static; }
+
+  .article-list-item {
+    flex-direction: column;
+    gap: var(--cm-space-sm);
+  }
+
+  .article-nav {
+    flex-direction: column;
+  }
+
+  .article-nav__link {
+    max-width: 100%;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: var(--cm-space-lg);
+  }
+
+  .section__title { font-size: var(--cm-font-size-xl); }
+}
+
+/* Desktop only (≥ 769px) */
+@media (min-width: 769px) {
+  .mobile-nav-overlay,
+  .mobile-nav { display: none; }
+  .header__menu-btn { display: none; }
+}
+
+/* Small desktop (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .category-page__layout {
+    grid-template-columns: 1fr 240px;
+    gap: var(--cm-space-lg);
+  }
+}
+
+/* Large desktop (≥ 1280px) */
+@media (min-width: 1280px) {
+  .hero__title {
+    font-size: 42px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- ===== Header ===== -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <a href="#/home" class="header__logo" aria-label="中国移动首页">
+        <svg viewBox="0 0 32 32" width="32" height="32">
+          <circle cx="16" cy="16" r="16" fill="#00A650"/>
+          <path d="M7 13h2.5v6H7zm4.5-2.5h2.5v10h-2.5zm4.5 4h2.5v6h-2.5zm4.5-3h2.5v9h-2.5zm4.5 1h2.5v8h-2.5z" fill="white"/>
+        </svg>
+        移动业务科普
+      </a>
+
+      <nav class="header__nav" id="desktopNav" aria-label="主导航">
+        <a href="#/home" class="header__nav-link" data-nav="home">首页</a>
+        <a href="#/category/broadband-basics" class="header__nav-link" data-nav="broadband-basics">宽带基础</a>
+        <a href="#/category/equipment" class="header__nav-link" data-nav="equipment">网络设备</a>
+        <a href="#/category/optimization" class="header__nav-link" data-nav="optimization">网络优化</a>
+        <a href="#/category/smart-life" class="header__nav-link" data-nav="smart-life">智能生活</a>
+        <a href="#/category/mobile" class="header__nav-link" data-nav="mobile">移动通信</a>
+        <a href="#/category/business-guide" class="header__nav-link" data-nav="business-guide">业务指南</a>
+      </nav>
+
+      <div class="header__actions">
+        <button class="header__search-btn" id="searchBtn" aria-label="搜索" title="搜索">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </button>
+        <button class="header__menu-btn" id="menuBtn" aria-label="菜单">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Main Content ===== -->
+  <main class="main-content" id="mainContent"></main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <h3>移动业务科普</h3>
+          <p>致力于为用户提供通俗易懂的中国移动业务知识，帮助您做出最适合自己的选择。宽带、5G、智能家居，一手掌握。</p>
+        </div>
+        <div class="footer__links">
+          <h4>快捷导航</h4>
+          <a href="#/home">首页</a>
+          <a href="#/category/broadband-basics">宽带基础</a>
+          <a href="#/category/equipment">网络设备</a>
+          <a href="#/category/optimization">网络优化</a>
+          <a href="#/category/smart-life">智能生活</a>
+          <a href="#/category/mobile">移动通信</a>
+          <a href="#/category/business-guide">业务指南</a>
+        </div>
+        <div class="footer__links">
+          <h4>联系方式</h4>
+          <a>客服热线：10086</a>
+          <a>宽带报修：10086-4</a>
+          <a>在线客服：中国移动APP</a>
+          <a>营业厅查询：就近办理</a>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>&copy; 2026 移动业务科普 | 中国移动业务员倾情呈现</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Mobile Nav ===== -->
+  <div class="mobile-nav-overlay" id="mobileOverlay"></div>
+  <nav class="mobile-nav" id="mobileNav">
+    <div class="mobile-nav__header">
+      <span style="font-weight:700;font-size:18px;color:var(--cm-primary)">导航菜单</span>
+      <button class="mobile-nav__close" id="mobileCloseBtn" aria-label="关闭">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="mobile-nav__links" id="mobileNavLinks">
+      <a href="#/home">🏠 首页</a>
+      <a href="#/category/broadband-basics">📡 宽带基础</a>
+      <a href="#/category/equipment">🔧 网络设备</a>
+      <a href="#/category/optimization">📶 网络优化</a>
+      <a href="#/category/smart-life">🏡 智能生活</a>
+      <a href="#/category/mobile">📱 移动通信</a>
+      <a href="#/category/business-guide">📋 业务指南</a>
+    </div>
+  </nav>
+
+  <!-- ===== Back to Top ===== -->
+  <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <!-- ===== Search Overlay ===== -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-overlay__inner">
+      <div class="search-overlay__bar">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" class="search-overlay__input" id="searchInput" placeholder="搜索移动业务知识...">
+        <button class="search-overlay__close" id="searchCloseBtn" aria-label="关闭搜索">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="search-overlay__results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- ===== Scripts ===== -->
+  
+  <script>
+(function(){
+"use strict";
+/* ===== Utility Functions ===== */
+
+/** Debounce: delays fn until `delay` ms after last call */
+function debounce(fn, delay = 300) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+/** Parse hash route: returns { page, params } */
+function parseRoute() {
+  const hash = window.location.hash.slice(1) || '/home';
+  const [path, query] = hash.split('?');
+  const segments = path.split('/').filter(Boolean);
+  const params = {};
+  if (query) {
+    query.split('&').forEach(p => {
+      const [k, v] = p.split('=');
+      if (k) params[decodeURIComponent(k)] = decodeURIComponent(v || '');
+    });
+  }
+
+  let page = 'home';
+  if (segments[0] === 'category' && segments[1]) {
+    page = 'category';
+    params.categoryId = segments[1];
+  } else if (segments[0] === 'article' && segments[1]) {
+    page = 'article';
+    params.articleId = segments[1];
+  } else if (segments[0] === 'search') {
+    page = 'search';
+    params.q = params.q || '';
+  }
+
+  return { page, params };
+}
+
+/** Format number with commas */
+function formatNumber(n) {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/** Truncate text */
+function truncate(text, max = 120) {
+  if (text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, '') + '...';
+}
+
+/** Strip HTML tags */
+function stripHtml(html) {
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
+}
+
+/** Get category by id */
+function getCategory(categories, id) {
+  return categories.find(c => c.id === id);
+}
+
+/** Get article by id */
+function getArticle(articles, id) {
+  return articles.find(a => a.id === id);
+}
+
+/** Get articles for a category */
+function getCategoryArticles(articles, categoryId) {
+  return articles.filter(a => a.categoryId === categoryId);
+}
+
+/** Get related articles */
+function getRelatedArticles(articles, currentId, relatedIds) {
+  if (relatedIds) return relatedIds.map(id => getArticle(articles, id)).filter(Boolean);
+  const current = getArticle(articles, currentId);
+  if (!current) return [];
+  return articles.filter(a => a.categoryId === current.categoryId && a.id !== currentId).slice(0, 3);
+}
+
+/** Smooth scroll to top */
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===== Hash Router Engine ===== */
+
+let currentRoute = null;
+const routeChangeCallbacks = [];
+
+/** Register route change listener */
+function onRouteChange(callback) {
+  routeChangeCallbacks.push(callback);
+}
+
+/** Navigate to a hash route */
+function navigate(hash) {
+  window.location.hash = hash;
+}
+
+/** Get current route */
+function getCurrentRoute() {
+  return currentRoute;
+}
+
+/** Initialize router */
+function initRouter(parseFn) {
+  function handleRoute() {
+    const route = parseFn();
+    currentRoute = route;
+    routeChangeCallbacks.forEach(cb => {
+      try { cb(route); } catch (e) { console.error('Route callback error:', e); }
+    });
+  }
+
+  window.addEventListener('hashchange', handleRoute);
+  handleRoute(); // initial load
+}
+
+/* ===== Search Engine ===== */
+
+/**
+ * Multi-field weighted fuzzy search
+ * Returns articles sorted by relevance score (descending)
+ */
+function searchArticles(articles, query) {
+  if (!query || query.trim().length === 0) return [];
+
+  const q = query.trim().toLowerCase();
+  const results = [];
+
+  for (const article of articles) {
+    let score = 0;
+    const title = article.title.toLowerCase();
+    const summary = article.summary.toLowerCase();
+    const tags = (article.tags || []).join(' ').toLowerCase();
+
+    // Exact match bonus
+    if (title === q) score += 50;
+    if (title.includes(q)) score += 20;
+    // Word match
+    const words = q.split(/\s+/);
+    for (const word of words) {
+      if (word.length < 1) continue;
+      if (title.includes(word)) score += 10;
+      if (tags.includes(word)) score += 8;
+      if (summary.includes(word)) score += 5;
+    }
+    // Partial match on shorter queries
+    if (q.length >= 2) {
+      let pos = title.indexOf(q);
+      if (pos !== -1) score += 15 - pos * 0.1; // earlier match = better
+      pos = tags.indexOf(q);
+      if (pos !== -1) score += 8;
+    }
+
+    if (score > 0) {
+      results.push({ article, score });
+    }
+  }
+
+  results.sort((a, b) => b.score - a.score);
+  return results.map(r => r.article);
+}
+
+/* ===== China Mobile Educational Content Database ===== */
+
+const categories = [
+  { id: 'broadband-basics', name: '宽带基础', icon: '📡', description: '了解宽带的基础概念、光纤原理、套餐选择、办理安装等入门知识。', color: '#00A650', order: 0 },
+  { id: 'equipment', name: '网络设备', icon: '🔧', description: '光猫、路由器、机顶盒、摄像头——帮你搞清楚每个设备的作用和选购技巧。', color: '#2196F3', order: 1 },
+  { id: 'optimization', name: '网络优化', icon: '📶', description: '网络卡顿？WiFi信号差？教你提升家庭网络质量的各种方法。', color: '#FF6B00', order: 2 },
+  { id: 'smart-life', name: '智能生活', icon: '🏡', description: '智能家居、家庭监控、电视融合套餐，打造智慧家庭。', color: '#7C4DFF', order: 3 },
+  { id: 'mobile', name: '移动通信', icon: '📱', description: '5G科普、手机信号、基站、携号转网——移动通信知识全掌握。', color: '#E91E63', order: 4 },
+  { id: 'business-guide', name: '业务指南', icon: '📋', description: '热门套餐推荐、融合业务、企业方案、常见问题解答。', color: '#00BCD4', order: 5 }
+];
+
+const articles = [
+  // ==================== 宽带基础 (broadband-basics) ====================
+  {
+    id: 'what-is-broadband', categoryId: 'broadband-basics', title: '什么是宽带？宽带的基本概念扫盲', order: 1,
+    summary: '宽带是什么？它是如何把互联网带到你家里的？这篇文章用最通俗的语言带你了解宽带的基础知识。',
+    tags: ['宽带', '入门', 'ADSL', '光纤'], readTime: 5, featured: true,
+    content: `
+      <h2>宽带是什么？</h2>
+      <p>宽带（Broadband）是指能够提供高速数据传输能力的通信网络。简单来说，<strong>宽带就是把互联网引入你家的"高速公路"</strong>——一条能同时传输大量数据的通信线路。有了宽带，你才能流畅地看视频、打游戏、远程办公。</p>
+
+      <h2>宽带的发展简史</h2>
+      <h3>电话线拨号上网（56K时代）</h3>
+      <p>最早的上网方式是通过电话线拨号，最高速度只有 56Kbps（千比特每秒）。那时候打开一张图片要等几十秒，看视频更是不可能。最要命的是<strong>上网和打电话不能同时进行</strong>。</p>
+
+      <h3>ADSL宽带（铜线时代）</h3>
+      <p>ADSL（非对称数字用户线路）利用原有的电话线，实现了上网和通话同时进行。下行速度最高可达 8Mbps-24Mbps。ADSL的"非对称"特性——<strong>下载速度远大于上传速度</strong>——至今仍是家庭宽带的典型特征。</p>
+
+      <h3>光纤宽带（光速时代）</h3>
+      <p>光纤宽带是目前最主流的家庭宽带技术。它使用光信号在玻璃纤维中传输数据，速度可达百兆、千兆甚至更高。中国移动目前大力推进光纤到户（FTTH），让千家万户享受高速网络。</p>
+
+      <h2>带宽的单位</h2>
+      <p>宽带的"多少兆"指的是<strong>带宽</strong>，单位是 Mbps（兆比特每秒）：</p>
+      <table>
+        <tr><th>带宽</th><th>实际下载速度</th><th>典型场景</th></tr>
+        <tr><td>100Mbps</td><td>约 10-12MB/s</td><td>普通家庭上网、看视频</td></tr>
+        <tr><td>300Mbps</td><td>约 30-37MB/s</td><td>多人同时使用、在线游戏</td></tr>
+        <tr><td>500Mbps</td><td>约 50-62MB/s</td><td>4K视频、大型文件下载</td></tr>
+        <tr><td>1000Mbps</td><td>约 100-125MB/s</td><td>8K视频、智能家居多设备</td></tr>
+      </table>
+      <p>注意：1 Byte（字节）= 8 bits（比特），所以 100M 宽带的实际下载速度大约是 100 ÷ 8 ≈ 12.5MB/秒。</p>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>目前中国移动主推光纤宽带，覆盖范围广泛。办理宽带时记得确认所在小区是否已有移动光纤覆盖，可通过 10086 或中国移动APP查询。</p>
+      </div>
+    `
+  },
+  {
+    id: 'fiber-optics', categoryId: 'broadband-basics', title: '光纤宽带是如何工作的？从光信号到网络数据', order: 2,
+    summary: '光纤是如何把光变成网络的？FTTH又是什么？了解光纤通信的基本原理。',
+    tags: ['光纤', 'FTTH', '光信号'], readTime: 6, featured: true,
+    content: `
+      <h2>光纤通信的基本原理</h2>
+      <p>光纤通信是利用<strong>光波在光导纤维中传输信息</strong>的通信方式。简单来说：发送端把电信号转换成光信号（通过激光器或LED），光信号在比头发丝还细的玻璃纤维中传输，到达接收端后再转换回电信号。</p>
+
+      <h2>光纤为什么这么快？</h2>
+      <p>光纤相比传统铜线的优势：</p>
+      <ul>
+        <li><strong>带宽极大</strong>：光的频率远高于电磁波，一根光纤可同时传输海量数据</li>
+        <li><strong>衰减小</strong>：光信号在光纤中传输距离远，中继间隔可达数十公里</li>
+        <li><strong>抗干扰</strong>：光信号不受电磁干扰，信号质量稳定</li>
+        <li><strong>体积小重量轻</strong>：一根光纤的传输能力远超一捆铜缆</li>
+      </ul>
+
+      <h2>FTTH（光纤到户）</h2>
+      <p><strong>FTTH（Fiber To The Home）</strong>是指光纤直接铺设到用户家门口或室内的接入方式。这是目前最先进的宽带接入方案。整个链路是：</p>
+      <ol>
+        <li>运营商机房（OLT设备）→ 光纤主干网</li>
+        <li>小区光交箱 → 分光器</li>
+        <li>入户光纤 → 家中光猫（ONT）</li>
+        <li>光猫 → 路由器 → 你的手机/电脑</li>
+      </ol>
+
+      <h2>光猫（ONT）的作用</h2>
+      <p><strong>ONT（Optical Network Terminal，光网络终端）</strong>就是我们常说的"光猫"。它的核心功能是<strong>光电转换</strong>——把光纤传来的光信号转换成网线可以传输的电信号，反之亦然。光猫一般由运营商在安装宽带时免费提供。</p>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>中国移动目前在全国大力推广千兆光纤宽带。如果你家已经覆盖移动光纤，10086 一个电话，师傅就能上门安装。安装时建议让师傅把光猫放在客厅中央位置，有利于WiFi信号覆盖全屋。</p>
+      </div>
+    `
+  },
+  {
+    id: '100m-vs-gigabit', categoryId: 'broadband-basics', title: '百兆宽带与千兆宽带的区别：你该选哪个？', order: 3,
+    summary: '100M、300M、500M、1000M宽带到底差多少？不同家庭场景需要多少带宽？帮你算清楚。',
+    tags: ['百兆', '千兆', '带宽', '选择'], readTime: 5, featured: true,
+    content: `
+      <h2>带宽数字的真实含义</h2>
+      <p>当你看到"100M宽带"时，这个"M"指的是<strong>Mbps</strong>（兆比特每秒）。把它除以 8，才是我们熟悉的下载速度（MB/s）：</p>
+      <table>
+        <tr><th>签约带宽</th><th>理论最大下载速度</th><th>理论最大上传速度</th></tr>
+        <tr><td>100Mbps</td><td>~12.5 MB/s</td><td>~2.5 MB/s</td></tr>
+        <tr><td>200Mbps</td><td>~25 MB/s</td><td>~5 MB/s</td></tr>
+        <tr><td>500Mbps</td><td>~62.5 MB/s</td><td>~12.5 MB/s</td></tr>
+        <tr><td>1000Mbps</td><td>~125 MB/s</td><td>~25 MB/s</td></tr>
+      </table>
+
+      <h2>你的家庭需要多少带宽？</h2>
+      <h3>100M 适合谁？</h3>
+      <p>1-2人小家庭、主要使用手机上网、偶尔看视频。日常刷抖音、看微信、浏览网页完全够用。</p>
+
+      <h3>300M-500M 适合谁？</h3>
+      <p>3-4人家庭、经常看高清视频、有孩子上网课、偶尔玩在线游戏。<strong>这是目前大多数家庭的"甜点"选择</strong>。</p>
+
+      <h3>1000M（千兆）适合谁？</h3>
+      <p>重度网络用户、智能家居多设备、有4K/8K视频需求、需要远程传输大文件、多人同时高带宽使用。千兆宽带还提供更高的上行速率，适合视频创作者。</p>
+
+      <h2>只换宽带够吗？</h2>
+      <p>升级到千兆宽带后，你还需要确保：</p>
+      <ul>
+        <li><strong>路由器支持千兆</strong>：老旧百兆路由器会成为瓶颈</li>
+        <li><strong>网线是超五类或六类线</strong>：普通五类线只支持百兆</li>
+        <li><strong>电脑网卡支持千兆</strong>：部分老旧电脑的网卡只支持百兆</li>
+        <li><strong>使用WiFi 6路由器</strong>：WiFi 5在无线场景可能跑不满千兆</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>中国移动目前提供多种宽带套餐，价格实惠。如果家里人多设备多，推荐至少选择 300M 宽带。升级千兆宽带后记得检查路由器和网线是否匹配，否则"千兆宽带用出百兆效果"。</p>
+      </div>
+    `
+  },
+  {
+    id: 'how-to-choose', categoryId: 'broadband-basics', title: '如何选择适合自己的宽带套餐？完整选购指南', order: 4,
+    summary: '按家庭人数、使用场景、预算来做决策——宽带套餐不会选？看完这篇就有数了。',
+    tags: ['套餐', '选择', '指南'], readTime: 5,
+    content: `
+      <h2>第一步：明确你的需求</h2>
+      <p>选择宽带套餐前，先问自己三个问题：<strong>家里几口人？主要拿来做什么？预算多少？</strong></p>
+
+      <h2>按使用场景推荐</h2>
+      <table>
+        <tr><th>使用场景</th><th>推荐带宽</th><th>说明</th></tr>
+        <tr><td>老年人/轻度使用</td><td>100M</td><td>看微信、刷抖音、视频通话足够</td></tr>
+        <tr><td>小家庭（1-2人）</td><td>200M-300M</td><td>看视频、在线购物、偶尔游戏</td></tr>
+        <tr><td>中等家庭（3-4人）</td><td>300M-500M</td><td>多人同时用、网课、高清视频</td></tr>
+        <tr><td>大家庭/重度用户</td><td>500M-1000M</td><td>多设备、4K视频、大型游戏下载</td></tr>
+        <tr><td>智能家居家庭</td><td>1000M</td><td>数十个智能设备同时在线</td></tr>
+      </table>
+
+      <h2>第二步：考虑融合套餐</h2>
+      <p>中国移动提供<strong>宽带+手机+电视</strong>的融合套餐，通常比单独购买更划算。如果你的手机已经是移动号码，融合套餐往往是最优选择。</p>
+      <ul>
+        <li><strong>全家享套餐</strong>：宽带+手机流量+语音+电视，一人付费全家共享</li>
+        <li><strong>美好家套餐</strong>：更高带宽+更多流量+更多增值服务</li>
+      </ul>
+
+      <h2>第三步：确认小区覆盖</h2>
+      <p>不同的宽带套餐在不同小区的可用性不同。办理前务必通过以下方式确认：</p>
+      <ol>
+        <li>拨打 10086 咨询</li>
+        <li>登录中国移动APP查询</li>
+        <li>前往附近营业厅询问</li>
+      </ol>
+
+      <h2>第四步：关注合约期限和费用</h2>
+      <p>注意套餐的合约期限、违约金条款、首年优惠和续约价格。建议选择<strong>无合约或短合约</strong>的套餐，保持灵活性。</p>
+    `
+  },
+  {
+    id: 'broadband-apply', categoryId: 'broadband-basics', title: '宽带办理流程全攻略：从申请到开通一气呵成', order: 5,
+    summary: '线上办还是线下办？需要准备什么材料？宽带办理的每一步详细说明。',
+    tags: ['办理', '流程', '资料'], readTime: 4,
+    content: `
+      <h2>办理渠道对比</h2>
+      <table>
+        <tr><th>渠道</th><th>优点</th><th>缺点</th></tr>
+        <tr><td>中国移动APP</td><td>24小时可办、优惠活动多</td><td>需要自己操作</td></tr>
+        <tr><td>10086客服</td><td>有人工指导、方便</td><td>高峰期需等待</td></tr>
+        <tr><td>线下营业厅</td><td>面对面咨询、当场办理</td><td>需要到场、营业时间限制</td></tr>
+        <tr><td>社区摆摊/业务员</td><td>家门口办、可能有专属优惠</td><td>注意核实身份</td></tr>
+      </table>
+
+      <h2>办理所需材料</h2>
+      <ul>
+        <li><strong>本人身份证原件</strong>（必须）</li>
+        <li>详细安装地址（小区名称、楼栋号、房号）</li>
+        <li>联系手机号码</li>
+        <li>如需代办，还需代办人身份证</li>
+      </ul>
+
+      <h2>安装预约</h2>
+      <p>办理成功后，装维师傅会在 1-3 个工作日内与你联系，预约具体上门安装时间。通常安装耗时约 1-2 小时。安装当天请确保家中有人。</p>
+
+      <h2>费用说明</h2>
+      <ul>
+        <li><strong>初装费</strong>：部分套餐免初装费（具体看活动）</li>
+        <li><strong>设备押金</strong>：光猫和机顶盒一般免押金借用</li>
+        <li><strong>月租费</strong>：按月从话费中扣除或单独缴费</li>
+      </ul>
+    `
+  },
+  {
+    id: 'broadband-install', categoryId: 'broadband-basics', title: '宽带安装指南：师傅上门要做哪些事？', order: 6,
+    summary: '宽带安装的完整流程，以及验收时需要注意的细节。',
+    tags: ['安装', '验收', '光猫'], readTime: 5,
+    content: `
+      <h2>安装前准备</h2>
+      <p>在师傅上门前，你需要确认：</p>
+      <ul>
+        <li>小区已有移动光纤覆盖</li>
+        <li>家中有一个靠近窗户或门口的位置可以放置光猫</li>
+        <li>准备好身份证用于业务确认</li>
+        <li>了解套餐内容和费用</li>
+      </ul>
+
+      <h2>安装当天流程</h2>
+      <ol>
+        <li><strong>光纤入户</strong>：师傅从楼道光纤分纤箱拉光纤入户，在墙上打一个小孔，安装光纤面板</li>
+        <li><strong>安装光猫</strong>：接好光纤，通电，光猫指示灯正常（PON灯常亮表示注册成功）</li>
+        <li><strong>安装路由器</strong>：网线连接光猫LAN口到路由器WAN口，设置WiFi名称和密码</li>
+        <li><strong>安装机顶盒（如有）</strong>：连接电视，配置IPTV</li>
+        <li><strong>测速验收</strong>：师傅用专业设备或手机测速，确认达到签约带宽</li>
+      </ol>
+
+      <h2>验收注意事项</h2>
+      <ul>
+        <li><strong>测速</strong>：用网线直连光猫测速，结果应达到签约带宽的 90% 以上</li>
+        <li><strong>WiFi覆盖</strong>：检查每个房间的WiFi信号强度</li>
+        <li><strong>电视（如有）</strong>：检查机顶盒是否正常播放</li>
+        <li><strong>外观</strong>：光纤走线是否美观，是否固定好</li>
+        <li><strong>保留工单</strong>：保留安装工单，上面有师傅联系方式</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>安装时可以和师傅沟通光纤走线路线，尽量沿着踢脚线或天花走，既美观又不影响信号。如果对安装不满意，可以要求师傅调整。</p>
+      </div>
+    `
+  },
+
+  // ==================== 网络设备 (equipment) ====================
+  {
+    id: 'ont-guide', categoryId: 'equipment', title: '光猫（ONT）是什么？新手必读指南', order: 1,
+    summary: '光猫是宽带上网的第一道关口。了解光猫的指示灯、功能和使用注意事项。',
+    tags: ['光猫', 'ONT', '设备', '指示灯'], readTime: 5, featured: true,
+    content: `
+      <h2>光猫是干什么的？</h2>
+      <p><strong>光猫</strong>（学名ONT，光网络终端）是光纤宽带接入家庭的<strong>第一台设备</strong>。它的核心任务只有一个：<strong>把光纤传来的光信号转换成网线可以用的电信号</strong>。</p>
+      <p>光纤里跑的是光信号（用激光表示的数据），但你的手机、电脑、路由器都只能处理电信号。光猫就是这个"翻译官"。</p>
+
+      <h2>认识光猫指示灯</h2>
+      <table>
+        <tr><th>指示灯</th><th>正常状态</th><th>异常含义</th></tr>
+        <tr><td>POWER（电源）</td><td>常亮</td><td>熄灭：没通电</td></tr>
+        <tr><td>PON（注册）</td><td>常亮</td><td>闪烁：未注册成功；熄灭：光纤断了</td></tr>
+        <tr><td>LOS（光信号）</td><td>熄灭</td><td>红灯闪烁：光纤故障</td></tr>
+        <tr><td>LAN1/LAN2</td><td>闪烁</td><td>熄灭：没接网线或设备没开机</td></tr>
+        <tr><td>WiFi（如有）</td><td>常亮或闪烁</td><td>表示无线功能状态</td></tr>
+      </table>
+
+      <h2>光猫常见问题</h2>
+      <h3>光猫需要重启吗？</h3>
+      <p>偶尔重启有好处——清理缓存、刷新连接。如果网络突然变慢或断连，<strong>拔掉光猫电源等10秒再插上</strong>是第一招。</p>
+
+      <h3>光猫自带WiFi能用吗？</h3>
+      <p>部分光猫自带WiFi功能，但<strong>不建议使用</strong>。运营商配的光猫WiFi性能普遍较弱，覆盖范围小、连接设备少。强烈建议外接一个好路由器。</p>
+
+      <h3>光猫能自己换吗？</h3>
+      <p><strong>不能！</strong>光猫需要和运营商的OLT设备注册配对，自己买的用不了。如果光猫坏了，打10086免费换。</p>
+    `
+  },
+  {
+    id: 'router-guide', categoryId: 'equipment', title: '路由器选购完全指南：WiFi5/6/7该怎么选？', order: 2,
+    summary: '路由器是影响WiFi体验最关键的因素，一文读懂WiFi标准、路由器参数和选购技巧。',
+    tags: ['路由器', 'WiFi6', 'WiFi7', '选购'], readTime: 7, featured: true,
+    content: `
+      <h2>WiFi标准进化史</h2>
+      <table>
+        <tr><th>标准</th><th>代号</th><th>最大速率</th><th>频段</th><th>发布时间</th></tr>
+        <tr><td>WiFi 4</td><td>802.11n</td><td>600Mbps</td><td>2.4GHz</td><td>2009</td></tr>
+        <tr><td>WiFi 5</td><td>802.11ac</td><td>6.9Gbps</td><td>5GHz</td><td>2013</td></tr>
+        <tr><td>WiFi 6</td><td>802.11ax</td><td>9.6Gbps</td><td>2.4+5GHz</td><td>2019</td></tr>
+        <tr><td>WiFi 7</td><td>802.11be</td><td>46Gbps</td><td>2.4+5+6GHz</td><td>2024</td></tr>
+      </table>
+
+      <h2>2026年该买什么路由器？</h2>
+      <ul>
+        <li><strong>WiFi 6 路由器</strong>：目前性价比最高，覆盖好、延迟低、功耗小。推荐大多数家庭选购，价格 150-500 元不等。</li>
+        <li><strong>WiFi 7 路由器</strong>：最新旗舰，支持 6GHz 频段和 320MHz 频宽。适合千兆宽带用户和数码发烧友，价格 500-2000+ 元。</li>
+        <li><strong>不要买 WiFi 5 了</strong>：技术老旧，无法充分利用现代宽带的性能。</li>
+      </ul>
+
+      <h2>选购路由器的关键参数</h2>
+      <ol>
+        <li><strong>无线速率</strong>：AX3000 意思是 2.4G + 5G 总计约 3000Mbps，家庭使用 AX3000 起步足够了</li>
+        <li><strong>天线数量</strong>：不是越多越好，但 4 根以上通常覆盖更好</li>
+        <li><strong>网口速率</strong>：必须全部是千兆口（1000M），WAN口和LAN口都要千兆</li>
+        <li><strong>是否支持Mesh</strong>：大户型必选，多个路由器组成统一WiFi网络</li>
+        <li><strong>处理器和内存</strong>：影响多设备同时连接的稳定性</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>办理宽带时，中国移动通常会提供路由器租赁服务。如果你对网络质量要求较高，建议自己购买一个好路由器，效果远好于运营商提供的基础型号。</p>
+      </div>
+    `
+  },
+  {
+    id: 'set-top-box', categoryId: 'equipment', title: '机顶盒的功能与选购：电视怎么连宽带？', order: 3,
+    summary: '移动魔百和机顶盒怎么用？IPTV和OTT有什么区别？如何选择适合的电视盒子？',
+    tags: ['机顶盒', 'IPTV', '魔百和', '电视'], readTime: 5,
+    content: `
+      <h2>机顶盒是什么？</h2>
+      <p>机顶盒（Set-Top Box）是连接电视和网络的设备，让你可以在电视上看网络视频、直播节目、点播电影。中国移动提供的是<strong>魔百和</strong>系列 IPTV 机顶盒。</p>
+
+      <h2>IPTV vs OTT 盒子</h2>
+      <table>
+        <tr><th></th><th>IPTV（魔百和）</th><th>OTT盒子（小米/当贝等）</th></tr>
+        <tr><td>信号传输</td><td>专有网络通道，不占宽带带宽</td><td>走公网，占用宽带带宽</td></tr>
+        <tr><td>直播质量</td><td>高清稳定，无缓冲</td><td>依赖网络，高峰期可能卡顿</td></tr>
+        <tr><td>内容</td><td>电视台直播+运营商内容</td><td>第三方APP内容</td></tr>
+        <tr><td>费用</td><td>随宽带套餐提供</td><td>需单独购买设备+会员</td></tr>
+      </table>
+
+      <h2>魔百和安装与使用</h2>
+      <ol>
+        <li>使用 HDMI 线连接机顶盒和电视</li>
+        <li>机顶盒用网线连接光猫的 IPTV 专用口（通常是LAN2）</li>
+        <li>开机后自动获取IP，进入主界面</li>
+        <li>首次使用可能需要师傅或10086激活</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>融合套餐通常包含魔百和机顶盒免费使用。如果你办的是融合宽带套餐，记得找师傅一并安装好机顶盒，可以看央视、卫视和各大视频平台内容。</p>
+      </div>
+    `
+  },
+  {
+    id: 'camera-guide', categoryId: 'equipment', title: '摄像头/监控选购指南：看家护院怎么选？', order: 4,
+    summary: '家用摄像头的类型、关键参数和中国移动看家服务的介绍。',
+    tags: ['摄像头', '监控', '看家', '安全'], readTime: 5,
+    content: `
+      <h2>家用摄像头类型</h2>
+      <ul>
+        <li><strong>室内云台机</strong>：可旋转、追踪移动物体，适合看宝宝、看宠物</li>
+        <li><strong>室外枪机</strong>：防水防尘，适合门口、院子</li>
+        <li><strong>门铃摄像头</strong>：集成门铃+摄像头，有人按门铃自动录像</li>
+        <li><strong>全彩夜视</strong>：晚上也能看清彩色画面，比传统红外夜视更清楚</li>
+      </ul>
+
+      <h2>选购关键参数</h2>
+      <table>
+        <tr><th>参数</th><th>推荐</th><th>说明</th></tr>
+        <tr><td>分辨率</td><td>至少1080P（200万像素）</td><td>2K/3K更清晰，4K略贵</td></tr>
+        <tr><td>夜视</td><td>红外+全彩双模式</td><td>全彩夜视需要补光灯</td></tr>
+        <tr><td>存储</td><td>云存储+本地存储卡</td><td>双重保险</td></tr>
+        <tr><td>防水等级</td><td>室外至少IP66</td><td>室内无所谓</td></tr>
+        <tr><td>视角</td><td>水平100°以上</td><td>越大覆盖越广</td></tr>
+      </table>
+
+      <h2>中国移动看家服务</h2>
+      <p>中国移动提供<strong>"移动看家"</strong>智能安防服务，包括摄像头设备、云存储、手机远程查看等功能。通过和家亲APP可以随时查看家中画面、接收异常报警。</p>
+    `
+  },
+  {
+    id: 'whole-house-wifi', categoryId: 'equipment', title: '全屋WiFi组网方案：Mesh vs AP+AC vs FTTR', order: 5,
+    summary: '大户型WiFi信号死角怎么办？三种主流全屋WiFi方案对比分析。',
+    tags: ['全屋WiFi', 'Mesh', 'FTTR', '组网'], readTime: 6, featured: true,
+    content: `
+      <h2>为什么一个路由器不够？</h2>
+      <p>对于大户型（120㎡以上）、复式楼、别墅，单个路由器很难覆盖所有房间。WiFi信号穿墙会衰减（尤其是承重墙），导致某些房间信号极差。</p>
+
+      <h2>方案一：Mesh组网</h2>
+      <p><strong>Mesh（无线网状网络）</strong>是目前最流行的全屋WiFi方案。由多个Mesh节点组成，节点之间通过无线或有线连接，形成一个统一的WiFi网络。</p>
+      <ul>
+        <li><strong>优点</strong>：安装简单（APP配置）、无缝漫游、扩展方便</li>
+        <li><strong>缺点</strong>：节点间无线回程会损失部分带宽</li>
+        <li><strong>适合</strong>：120-200㎡平层、不想布线</li>
+        <li><strong>价格</strong>：两节点套装 300-1000 元</li>
+      </ul>
+
+      <h2>方案二：AP+AC</h2>
+      <p>AP+AC是更专业的方案：AC控制器统一管理，AP（接入点）分布在各房间，通过预埋的网线连接。</p>
+      <ul>
+        <li><strong>优点</strong>：性能最优、稳定性最好、支持大量设备</li>
+        <li><strong>缺点</strong>：需要预埋网线、设置复杂、价格较高</li>
+        <li><strong>适合</strong>：装修时预埋了网线、对网络要求极高</li>
+        <li><strong>价格</strong>：AC+3个AP 1000-3000 元</li>
+      </ul>
+
+      <h2>方案三：FTTR（光纤到房间）</h2>
+      <p>中国移动主推的<strong>FTTR</strong>方案，用光纤替代网线，将光纤铺设到每个房间，每个房间安装一个光AP。</p>
+      <ul>
+        <li><strong>优点</strong>：千兆无衰减、隐形光纤美观、运营商一站式服务</li>
+        <li><strong>缺点</strong>：需要专业施工、目前价格高于Mesh</li>
+        <li><strong>适合</strong>：千兆宽带用户、追求极致性能、不想自己折腾</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>中国移动提供 FTTR 全屋WiFi服务，包含方案设计、光纤布线、设备安装全套服务。如果你家超过 120㎡ 且办理了千兆宽带，强烈推荐了解移动 FTTR 方案。</p>
+      </div>
+    `
+  },
+
+  // ==================== 网络优化 (optimization) ====================
+  {
+    id: 'network-quality', categoryId: 'optimization', title: '网络卡顿？WiFi信号差？全面排查与提升指南', order: 1,
+    summary: '网速慢不一定是宽带的问题！从光猫到路由器到终端，系统性排查和优化方法。',
+    tags: ['网络质量', '卡顿', '排查'], readTime: 6, featured: true,
+    content: `
+      <h2>先找出瓶颈在哪里</h2>
+      <p>网络慢的原因可能在任何一个环节。请在电脑上用<strong>网线直连光猫</strong>测速：</p>
+      <ul>
+        <li>如果网线直连速度达标 → 问题出在路由器或WiFi</li>
+        <li>如果网线直连速度不达标 → 联系10086报修</li>
+      </ul>
+
+      <h2>WiFi信号优化技巧</h2>
+      <h3>1. 路由器的摆放位置最重要</h3>
+      <ul>
+        <li>放在房子的<strong>中心位置</strong>，不是角落</li>
+        <li>放在<strong>高一点</strong>的地方（1米以上），不要放地上</li>
+        <li><strong>远离</strong>微波炉、冰箱、蓝牙设备等干扰源</li>
+        <li>天线垂直地面（不要横着）</li>
+      </ul>
+
+      <h3>2. 选择合适的WiFi频段</h3>
+      <ul>
+        <li><strong>2.4GHz</strong>：穿墙好、覆盖远，但速度慢、干扰多（邻居的WiFi、微波炉、蓝牙都在这个频段）</li>
+        <li><strong>5GHz</strong>：速度快、干扰少，但穿墙能力弱</li>
+        <li><strong>建议</strong>：靠近路由器用5GHz，隔墙远的房间用2.4GHz。双频合一功能可以自动切换</li>
+      </ul>
+
+      <h3>3. 定期重启设备</h3>
+      <p>光猫和路由器建议<strong>每周重启一次</strong>（拔电源10秒再插上）。长期运行会积累缓存、可能导致性能下降。</p>
+
+      <h3>4. 更换WiFi信道</h3>
+      <p>如果你住在公寓楼，邻居的WiFi可能和你挤在同一个信道，造成干扰。在路由器管理后台切换到不那么拥挤的信道（1、6、11 中选一个）。</p>
+    `
+  },
+  {
+    id: 'speed-test', categoryId: 'optimization', title: '宽带测速怎么做才准确？手把手教学', order: 2,
+    summary: '为什么测出来的速度总比套餐写的慢？正确的测速方法和工具推荐。',
+    tags: ['测速', '工具', '方法'], readTime: 5,
+    content: `
+      <h2>为什么你测的速度总是不够？</h2>
+      <p>测速结果受很多因素影响：WiFi信号衰减、测速服务器距离、家里其他设备在下载、老旧手机/电脑网卡瓶颈……所以测速之前，先做好准备工作。</p>
+
+      <h2>正确测速的步骤</h2>
+      <ol>
+        <li><strong>用网线，别用WiFi</strong>：找一根千兆网线，把电脑直连光猫的千兆口</li>
+        <li><strong>关闭其他设备</strong>：关掉其他在下载/看视频的设备</li>
+        <li><strong>关闭后台程序</strong>：关掉电脑上正在下载或上传的软件</li>
+        <li><strong>选择合适的测速工具</strong></li>
+        <li><strong>多测几次</strong>：测3次取平均值，排除偶然因素</li>
+      </ol>
+
+      <h2>推荐的测速工具</h2>
+      <table>
+        <tr><th>工具</th><th>平台</th><th>特点</th></tr>
+        <tr><td>Speedtest.net</td><td>网页/APP</td><td>全球最常用，服务器多</td></tr>
+        <tr><td>中国移动官方测速</td><td>网页/APP</td><td>移动官方节点，最准确</td></tr>
+        <tr><td>和家亲APP</td><td>手机</td><td>移动用户专用，集成测速功能</td></tr>
+      </table>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>如果你用网线直连光猫测速仍不达标（低于签约带宽的90%），可以拨打 10086 报修，装维师傅会上门排查。如果是千兆宽带，师傅还会带专业光功率计来检测光纤质量。</p>
+      </div>
+    `
+  },
+  {
+    id: 'wifi-optimization', categoryId: 'optimization', title: 'WiFi信号优化：从信道选择到天线摆放', order: 3,
+    summary: 'WiFi信号不好怎么调？信道选择、频段切换、天线角度等实用技巧。',
+    tags: ['WiFi', '信道', '信号', '优化'], readTime: 5,
+    content: `
+      <h2>为什么WiFi信号不好？</h2>
+      <p>WiFi使用无线电波传输数据，以下因素都会影响信号质量：</p>
+      <ul>
+        <li><strong>距离</strong>：距离越远信号越弱</li>
+        <li><strong>障碍物</strong>：承重墙（-15dB以上）、家具、镜子都会衰减信号</li>
+        <li><strong>干扰</strong>：邻居WiFi、微波炉、蓝牙、无线鼠标键盘</li>
+        <li><strong>频段拥堵</strong>：公寓楼里几十个WiFi挤在同一个信道</li>
+      </ul>
+
+      <h2>优化技巧</h2>
+      <h3>调整路由器位置</h3>
+      <p>把路由器放在房子中央、高处（书架顶上），远离墙角、金属物、鱼缸旁。</p>
+
+      <h3>切换WiFi信道</h3>
+      <p>登录路由器管理后台（通常是 192.168.1.1 或 192.168.0.1），在WiFi设置中手动选择一个不那么拥挤的信道。2.4GHz 推荐信道 1、6、11；5GHz 信道资源充足，一般不用手动选。</p>
+
+      <h3>善用双频</h3>
+      <p>把2.4GHz和5GHz的SSID分开（不要用"双频合一"），让设备手动选择。近的地方连5GHz，远的地方连2.4GHz。</p>
+
+      <h3>更换高增益天线</h3>
+      <p>如果路由器天线是可拆卸的，可以换成高增益天线（如 8dBi），提升信号覆盖范围。</p>
+    `
+  },
+  {
+    id: 'invisible-fiber', categoryId: 'optimization', title: '隐形光纤布线：美观与速度兼得的全屋覆盖方案', order: 4,
+    summary: '光纤透明的！隐形光纤可以在不破坏装修的情况下实现千兆到每个房间。',
+    tags: ['隐形光纤', 'FTTR', '布线'], readTime: 5,
+    content: `
+      <h2>什么是隐形光纤？</h2>
+      <p>隐形光纤是<strong>一种透明、直径仅约 0.9mm 的特种光纤</strong>。它几乎看不见，可以沿着踢脚线、门框、天花板边缘布线，不会破坏家里的装修美观。</p>
+
+      <h2>隐形光纤的优势</h2>
+      <ul>
+        <li><strong>近乎隐形</strong>：直径不到1mm，透明材质，贴着墙角走几乎看不到</li>
+        <li><strong>无需开槽</strong>：不像传统暗线需要凿墙埋管</li>
+        <li><strong>千兆无衰减</strong>：光纤传输距离远、速度无损</li>
+        <li><strong>施工快速</strong>：一套三室两厅的房子，一般 2-3 小时就能布好</li>
+      </ul>
+
+      <h2>隐形光纤怎么安装？</h2>
+      <ol>
+        <li>装维师傅上门勘察，规划光纤走线路线</li>
+        <li>用专用胶水或卡扣将光纤沿着踢脚线、门框固定</li>
+        <li>光纤走到每个房间后，接到光AP面板上</li>
+        <li>测试每个房间的光功率和网速</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>中国移动 FTTR 服务使用隐形光纤布线，施工不破坏装修。如果你家已经装修好但网线没布到位，隐形光纤是解决全屋WiFi覆盖的完美方案。拨打 10086 咨询 FTTR 业务。</p>
+      </div>
+    `
+  },
+  {
+    id: 'fttr-guide', categoryId: 'optimization', title: 'FTTR（光纤到房间）是什么？值得办理吗？', order: 5,
+    summary: '中国移动FTTR全解析：原理、优势、资费和适用场景。',
+    tags: ['FTTR', '光纤到房间', '全屋WiFi'], readTime: 6, featured: true,
+    content: `
+      <h2>FTTR是什么？</h2>
+      <p><strong>FTTR（Fiber to The Room，光纤到房间）</strong>是 FTTH（光纤到户）的升级版。它把光纤从家门口的信息箱一直延伸到每个房间，每个房间安装一个光AP面板，实现全屋千兆WiFi覆盖。</p>
+
+      <h2>FTTR vs 传统方案对比</h2>
+      <table>
+        <tr><th></th><th>FTTR</th><th>Mesh组网</th><th>传统单路由</th></tr>
+        <tr><td>传输介质</td><td>光纤</td><td>网线/无线</td><td>无线</td></tr>
+        <tr><td>每个房间速度</td><td>千兆满速</td><td>无线回程可能减半</td><td>远房间信号极差</td></tr>
+        <tr><td>安装复杂度</td><td>需运营商施工</td><td>自己可设</td><td>即插即用</td></tr>
+        <tr><td>美观度</td><td>隐形光纤，几乎看不到</td><td>节点需电源</td><td>单设备</td></tr>
+      </table>
+
+      <h2>FTTR的适用场景</h2>
+      <ul>
+        <li>✅ 已办理千兆宽带，想真正跑满千兆</li>
+        <li>✅ 大户型（120㎡以上）、复式、别墅</li>
+        <li>✅ 家里装修时没预埋网线</li>
+        <li>✅ 对网络要求高（远程办公、在线游戏、4K视频）</li>
+        <li>✅ 不想自己折腾网络设备</li>
+      </ul>
+
+      <h2>中国移动FTTR资费</h2>
+      <p>FTTR通常和千兆宽带套餐捆绑，提供设备（主光猫+多个从AP）免费使用。具体资费请咨询 10086 或当地营业厅，不同城市和活动期间价格可能不同。</p>
+    `
+  },
+
+  // ==================== 智能生活 (smart-life) ====================
+  {
+    id: 'smart-home-guide', categoryId: 'smart-life', title: '智能家居入门指南：让家变聪明的第一步', order: 1,
+    summary: '什么是智能家居？需要哪些设备？中国移动的智能家居生态介绍。',
+    tags: ['智能家居', '入门', 'IoT'], readTime: 5,
+    content: `
+      <h2>智能家居是什么？</h2>
+      <p>智能家居就是让家里的设备<strong>联网、互通、可远程控制和自动化</strong>。比如：出门在外可以用手机查看家里情况、到家前提前开空调、一键关掉所有灯和电器。</p>
+
+      <h2>智能家居需要什么基础？</h2>
+      <ol>
+        <li><strong>稳定的宽带网络</strong>：所有智能设备都需要联网，宽带是智能家居的基石</li>
+        <li><strong>WiFi全覆盖</strong>：每个有智能设备的房间都要有良好的WiFi信号</li>
+        <li><strong>一个控制中心</strong>：手机APP（如和家亲）、智能音箱、或智能中控屏</li>
+      </ol>
+
+      <h2>常见的智能设备</h2>
+      <table>
+        <tr><th>类别</th><th>设备</th><th>典型场景</th></tr>
+        <tr><td>安防</td><td>智能门锁、摄像头、门磁</td><td>远程查看、异常报警</td></tr>
+        <tr><td>照明</td><td>智能灯泡、智能开关</td><td>语音控制、定时开关</td></tr>
+        <tr><td>环境</td><td>智能空调、加湿器、空气净化器</td><td>远程控制、自动调节</td></tr>
+        <tr><td>家电</td><td>智能冰箱、洗衣机、扫地机器人</td><td>远程操控、定时任务</td></tr>
+        <tr><td>窗帘</td><td>智能窗帘电机</td><td>定时开合、语音控制</td></tr>
+      </table>
+
+      <h2>中国移动和家亲平台</h2>
+      <p><strong>和家亲</strong>是中国移动推出的智能家居APP，可以统一管理兼容的智能设备。目前已接入数百款智能设备，支持摄像头查看、智能设备联动、家庭网络管理等功能。</p>
+    `
+  },
+  {
+    id: 'home-surveillance', categoryId: 'smart-life', title: '移动看家：家庭安防监控完整解决方案', order: 2,
+    summary: '中国移动看家服务是什么？包含哪些设备？怎么使用？',
+    tags: ['监控', '看家', '安防', '摄像头'], readTime: 4,
+    content: `
+      <h2>移动看家是什么？</h2>
+      <p><strong>移动看家</strong>是中国移动推出的智能安防服务，包含高清摄像头、云存储、AI智能检测、手机远程查看等功能。通过和家亲APP，你可以随时随地查看家中画面。</p>
+
+      <h2>移动看家包含哪些功能？</h2>
+      <ul>
+        <li><strong>高清监控</strong>：1080P/2K/3K 多种分辨率可选，支持红外夜视和全彩夜视</li>
+        <li><strong>云存储</strong>：录像自动上传云端，不怕摄像头被偷或损坏</li>
+        <li><strong>AI检测</strong>：人形检测、移动侦测、声音检测，有情况自动推送提醒</li>
+        <li><strong>双向语音</strong>：在手机上可以直接和家里的人或宠物说话</li>
+        <li><strong>多终端查看</strong>：手机、平板、电脑都能看</li>
+      </ul>
+
+      <h2>使用场景</h2>
+      <ul>
+        <li>上班时看家里的老人或宝宝</li>
+        <li>外出旅行时看护家中的宠物</li>
+        <li>门口监控快递和访客</li>
+        <li>店铺或办公室的安防监控</li>
+      </ul>
+    `
+  },
+  {
+    id: 'tv-broadband-bundle', categoryId: 'smart-life', title: '宽带+电视融合套餐：看电视的正确打开方式', order: 3,
+    summary: '移动宽带的IPTV电视套餐介绍，融合套餐怎么选更划算？',
+    tags: ['电视', 'IPTV', '融合套餐'], readTime: 4,
+    content: `
+      <h2>IPTV是什么？</h2>
+      <p>IPTV（互联网协议电视）是通过宽带网络传输的电视服务。和传统有线电视不同，IPTV使用专用网络通道，不占用你的上网带宽，画质更清晰、内容更丰富。</p>
+
+      <h2>中国移动IPTV的优势</h2>
+      <ul>
+        <li><strong>频道丰富</strong>：央视、卫视、地方台一应俱全，还有4K超清频道</li>
+        <li><strong>回看功能</strong>：错过的节目可以回看，不用着急赶回家</li>
+        <li><strong>点播内容</strong>：海量电影、电视剧、综艺、动漫随时点播</li>
+        <li><strong>不占宽带</strong>：IPTV走独立通道，看电视和上网互不影响</li>
+        <li><strong>资费优惠</strong>：融合套餐中电视服务通常免费或极低费用</li>
+      </ul>
+
+      <h2>融合套餐推荐</h2>
+      <p>中国移动的<strong>全家享</strong>和<strong>美好家</strong>套餐包括宽带+手机+电视三合一，算下来比单独办理每一项都便宜。如果你既是移动手机用户又需要宽带和电视，融合套餐性价比最高。</p>
+    `
+  },
+  {
+    id: 'smart-device-setup', categoryId: 'smart-life', title: '智能设备联网教程：从小白到智能达人', order: 4,
+    summary: '新买了一个智能设备？教你从配网到日常使用的一站式教程。',
+    tags: ['智能设备', '联网', '配网'], readTime: 5,
+    content: `
+      <h2>智能设备常见的配网方式</h2>
+      <h3>1. WiFi配网（最常见）</h3>
+      <p>设备开启一个临时热点，手机APP连接到这个热点后，告诉设备你家的WiFi名称和密码。这是目前最通用的方式。</p>
+
+      <h3>2. 蓝牙配网</h3>
+      <p>手机通过蓝牙连接设备，在APP中输入WiFi信息。比WiFi配网更稳定，逐渐成为主流。</p>
+
+      <h3>3. 扫码配网</h3>
+      <p>设备屏幕上显示二维码，手机扫码后自动完成联网。多见于带屏幕的设备。</p>
+
+      <h2>配网失败的常见原因</h2>
+      <ul>
+        <li><strong>WiFi是5GHz</strong>：很多智能设备只支持2.4GHz WiFi，请确认连的是2.4G</li>
+        <li><strong>路由器开启了AP隔离</strong>：关闭路由器的"AP隔离"或"客户端隔离"功能</li>
+        <li><strong>WiFi名称或密码含特殊字符</strong>：改用纯英文+数字的WiFi名称</li>
+        <li><strong>距离太远</strong>：配网时把设备靠近路由器</li>
+      </ul>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>如果家里智能设备多（10个以上），建议给智能设备单独设置一个2.4GHz的访客网络，和手机电脑用的主网络分开，互不干扰也更安全。</p>
+      </div>
+    `
+  },
+
+  // ==================== 移动通信 (mobile) ====================
+  {
+    id: '5g-knowledge', categoryId: 'mobile', title: '5G网络科普：比4G快多少？什么时候该升5G？', order: 1,
+    summary: '5G的特点、覆盖情况、SA和NSA的区别，以及你是否需要升级5G。',
+    tags: ['5G', '网速', '科普', 'SA', 'NSA'], readTime: 6, featured: true,
+    content: `
+      <h2>5G到底快在哪里？</h2>
+      <table>
+        <tr><th>特性</th><th>4G</th><th>5G</th></tr>
+        <tr><td>峰值速率</td><td>1Gbps</td><td>20Gbps（理论）</td></tr>
+        <tr><td>时延</td><td>30-50ms</td><td>1ms（理论）</td></tr>
+        <tr><td>连接密度</td><td>10万设备/km²</td><td>100万设备/km²</td></tr>
+        <tr><td>移动性</td><td>350km/h</td><td>500km/h</td></tr>
+      </table>
+
+      <h2>5G的三大应用场景</h2>
+      <ol>
+        <li><strong>eMBB（增强移动宽带）</strong>：超高速上网，8K视频秒传，VR/AR体验</li>
+        <li><strong>uRLLC（超高可靠低延迟）</strong>：自动驾驶、远程手术、工业自动化</li>
+        <li><strong>mMTC（大规模机器通信）</strong>：智慧城市、智能抄表、万物互联</li>
+      </ol>
+
+      <h2>SA vs NSA 组网</h2>
+      <p><strong>NSA（非独立组网）</strong>：5G基站挂在4G核心网上，是过渡方案。<strong>SA（独立组网）</strong>：端到端纯5G网络，才能真正发挥5G的低延迟和网络切片优势。中国移动已全面转向SA组网。</p>
+
+      <h2>你需要升级5G吗？</h2>
+      <ul>
+        <li>✅ 你的手机支持5G（最近3年买的手机基本都支持）</li>
+        <li>✅ 所在地区有5G信号覆盖（城区基本全覆盖）</li>
+        <li>✅ 经常用手机看高清视频、玩大型网游</li>
+        <li>✅ 套餐内5G流量够用</li>
+      </ul>
+      <p>如果你的使用场景主要是刷微信、看短视频、听歌，4G其实也够用。5G的真正优势在于高带宽场景和低延迟场景。</p>
+    `
+  },
+  {
+    id: 'phone-signal', categoryId: 'mobile', title: '手机信号不好怎么办？原因分析与提升方法', order: 2,
+    summary: '手机信号差是基站问题还是手机问题？如何提升手机信号质量？',
+    tags: ['手机信号', '基站', '提升'], readTime: 5,
+    content: `
+      <h2>手机信号不好的常见原因</h2>
+      <ul>
+        <li><strong>距离基站远</strong>：信号随距离衰减，离基站越远信号越弱</li>
+        <li><strong>障碍物遮挡</strong>：地下室、电梯、厚墙会严重衰减信号</li>
+        <li><strong>建筑材质</strong>：钢筋混凝土、金属保温层、Low-E玻璃对信号屏蔽严重</li>
+        <li><strong>手机问题</strong>：老旧手机天线性能差、基带版本旧</li>
+        <li><strong>SIM卡老化</strong>：长期不换的SIM卡可能接触不良或版本过旧</li>
+        <li><strong>网络拥堵</strong>：人多的地方（演唱会、火车站）基站不够用</li>
+      </ul>
+
+      <h2>提升手机信号的方法</h2>
+      <ol>
+        <li><strong>开通VoLTE/VoNR</strong>：让通话也走4G/5G网络，音质更好、接通更快</li>
+        <li><strong>更换SIM卡</strong>：旧的SIM卡可能不支持最新的网络功能</li>
+        <li><strong>使用WiFi通话</strong>：在WiFi覆盖好的地方开启WiFi Calling</li>
+        <li><strong>走到窗边</strong>：室内信号差时走到窗边是立刻见效的方法</li>
+        <li><strong>信号放大器</strong>：对于信号盲区，可以安装手机信号放大器（需合法合规）</li>
+        <li><strong>联系10086</strong>：反馈信号问题，运营商可能派人来测试优化</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>如果你家手机信号不好，可以拨打 10086 反馈。移动会派工程师上门测试，如果确实覆盖差，可能在你家附近加装微型基站（Small Cell）。</p>
+      </div>
+    `
+  },
+  {
+    id: 'base-station', categoryId: 'mobile', title: '基站信号科普：基站辐射到底有没有害？', order: 3,
+    summary: '基站是怎么工作的？基站辐射的真相是什么？解答你对基站的所有疑问。',
+    tags: ['基站', '辐射', '科普', '信号覆盖'], readTime: 5,
+    content: `
+      <h2>基站是如何工作的？</h2>
+      <p>基站（Base Station）是移动通信网络中的关键设备。每个基站覆盖一个区域（称为"小区"），你的手机通过无线电波与基站通信，基站再通过光纤连接到核心网络。</p>
+      <p>基站覆盖范围一般是<strong>几百米到几公里</strong>，取决于频段、功率和地形。频率越高（如5G的高频段），覆盖范围越小，需要更密的基站布设。</p>
+
+      <h2>基站辐射的真相</h2>
+      <p><strong>基站辐射属于电磁辐射，不是电离辐射</strong>（如X光、核辐射）。两者的区别：</p>
+      <ul>
+        <li>电离辐射有足够能量破坏分子结构，可能致癌</li>
+        <li>电磁辐射能量很低，主要效应是"热效应"（让物体微微升温）</li>
+      </ul>
+      <p>我国对基站电磁辐射有严格标准（GB 8702），<strong>比国际标准更严格</strong>。基站的电磁辐射水平远低于安全限值，通常只有限值的几十分之一甚至几百分之一。</p>
+
+      <h2>"基站越多辐射越大"是错的</h2>
+      <p>恰恰相反：<strong>基站越密，手机和基站通信所需的发射功率就越小</strong>。因为手机不用"喊"那么大声了。所以基站越密，你受到的总体电磁辐射反而越小。</p>
+    `
+  },
+  {
+    id: 'number-portability', categoryId: 'mobile', title: '携号转网全攻略：不换号也能换运营商', order: 4,
+    summary: '携号转网的条件、流程和注意事项。想转到移动？看完这篇就知道该怎么做了。',
+    tags: ['携号转网', '换运营商', '流程'], readTime: 6, featured: true,
+    content: `
+      <h2>什么是携号转网？</h2>
+      <p>携号转网是指<strong>在不更换手机号码的情况下，更换运营商</strong>。比如从联通转到移动，或从电信转到移动，原来的手机号保持不变。</p>
+
+      <h2>携号转网的条件</h2>
+      <ul>
+        <li>✅ 手机号已在当前运营商实名认证</li>
+        <li>✅ 手机号处于正常使用状态（未欠费、未停机）</li>
+        <li>✅ 与当前运营商无在网约定期限限制（合约到期或已解约）</li>
+        <li>✅ 距上次携号转网已满 120 天</li>
+        <li>✅ 手机号为本人身份证办理</li>
+      </ul>
+
+      <h2>携号转网流程</h2>
+      <ol>
+        <li><strong>查询资格</strong>：编辑短信 "CXXZ#姓名#身份证号" 发送到原运营商（移动10086/联通10010/电信10001），查询是否符合转网条件</li>
+        <li><strong>申请授权码</strong>：符合条件后，编辑 "SQXZ#姓名#身份证号" 发送到原运营商，获取携转授权码（有效期1小时）</li>
+        <li><strong>到移动办理</strong>：持本人身份证和授权码，前往中国移动营业厅办理携入</li>
+        <li><strong>换SIM卡</strong>：领取新的移动SIM卡，插入手机</li>
+        <li><strong>生效</strong>：通常在整点时间生效（如办理后下一个整点），生效后原运营商服务中断，移动服务开启</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>携号转网后可能会有短暂的业务中断（通常几分钟到1小时），建议避开重要通话期间办理。另外，原运营商的积分、剩余话费通常不能跨网转移，建议转网前用完。</p>
+      </div>
+    `
+  },
+  {
+    id: 'volte-vonr', categoryId: 'mobile', title: 'VoLTE与VoNR：为什么通话质量差别这么大？', order: 5,
+    summary: '从2G语音到VoNR超清通话，了解手机通话技术的进化。',
+    tags: ['VoLTE', 'VoNR', '通话', '语音'], readTime: 4,
+    content: `
+      <h2>手机通话技术的演变</h2>
+      <table>
+        <tr><th>技术</th><th>网络</th><th>音质</th><th>接通时间</th></tr>
+        <tr><td>传统语音</td><td>2G/3G CS域</td><td>窄带，像对讲机</td><td>3-5秒</td></tr>
+        <tr><td>VoLTE</td><td>4G</td><td>高清，CD音质</td><td>1-2秒</td></tr>
+        <tr><td>VoNR</td><td>5G</td><td>超清，临场感</td><td><1秒</td></tr>
+      </table>
+
+      <h2>为什么要开启VoLTE？</h2>
+      <ul>
+        <li><strong>通话时不断网</strong>：传统通话回落到2G/3G，通话时4G断网。VoLTE让你一边打电话一边高速上网</li>
+        <li><strong>音质大幅提升</strong>：高清语音（HD Voice），对方声音更清晰自然</li>
+        <li><strong>接通更快</strong>：拨号后几乎立即接通</li>
+      </ul>
+
+      <h2>如何开启VoLTE？</h2>
+      <p>大部分手机默认已开启。如果没开启，在设置中搜索"VoLTE"或"高清通话"，打开开关即可。VoLTE免费，不额外收费。</p>
+    `
+  },
+
+  // ==================== 业务指南 (business-guide) ====================
+  {
+    id: 'popular-packages', categoryId: 'business-guide', title: '中国移动热门套餐推荐', order: 1,
+    summary: '2026年最值得办理的移动套餐整理，覆盖不同需求和预算。',
+    tags: ['套餐', '推荐', '资费'], readTime: 5, featured: true,
+    content: `
+      <h2>套餐选择原则</h2>
+      <p>选套餐的核心原则：<strong>按需选择，不盲目追高</strong>。主要看三个方面：每月用多少流量？需不需要宽带和电视？家里几口人共用？</p>
+
+      <h2>套餐类型概览</h2>
+      <table>
+        <tr><th>套餐类型</th><th>适合人群</th><th>包含内容</th></tr>
+        <tr><td>基础套餐</td><td>轻度用户</td><td>流量+语音</td></tr>
+        <tr><td>全家享套餐</td><td>家庭用户</td><td>宽带+手机+电视（可多人共享）</td></tr>
+        <tr><td>美好家套餐</td><td>品质用户</td><td>更高带宽+更多流量+增值服务</td></tr>
+        <tr><td>5G套餐</td><td>5G用户</td><td>5G高速流量+5G应用权益</td></tr>
+      </table>
+
+      <h2>怎么查最新套餐？</h2>
+      <p>套餐资费会随活动调整，最准确的方式是：</p>
+      <ol>
+        <li>打开中国移动APP → 套餐专区</li>
+        <li>拨打 10086 转人工咨询</li>
+        <li>前往附近移动营业厅</li>
+        <li>联系您的专属客户经理</li>
+      </ol>
+
+      <div class="highlight-box">
+        <h4>中国移动小贴士</h4>
+        <p>融合套餐（宽带+手机+电视）通常比分开办理便宜 30%-50%。如果你同时需要宽带和手机服务，选择融合套餐最划算。</p>
+      </div>
+    `
+  },
+  {
+    id: 'fusion-business', categoryId: 'business-guide', title: '宽带+手机+电视融合业务：一门式搞定', order: 2,
+    summary: '融合套餐是什么？为什么它比单独办理更划算？',
+    tags: ['融合套餐', '省钱', '宽带+手机'], readTime: 4,
+    content: `
+      <h2>什么是融合业务？</h2>
+      <p>融合业务就是将<strong>宽带、手机、电视</strong>等多个业务捆绑在一起的一个套餐。你只需要付一笔月租，就能同时享受这些服务。</p>
+
+      <h2>融合套餐的好处</h2>
+      <ul>
+        <li><strong>价格更优惠</strong>：比单独办理每个业务便宜 30%-50%</li>
+        <li><strong>一个账号管理</strong>：不用分别缴费</li>
+        <li><strong>家庭成员共享</strong>：流量和语音可以多张副卡共享</li>
+        <li><strong>增值服务多</strong>：通常附带视频会员、云盘空间等</li>
+        <li><strong>办理方便</strong>：一次办理，宽带、手机、电视全部搞定</li>
+      </ul>
+
+      <h2>融合套餐适合谁？</h2>
+      <ul>
+        <li>家庭用户（一家人共同使用）</li>
+        <li>已经用移动手机号，还想办移动宽带</li>
+        <li>希望一站式管理所有通信服务的用户</li>
+      </ul>
+    `
+  },
+  {
+    id: 'enterprise-solution', categoryId: 'business-guide', title: '企业宽带解决方案介绍', order: 3,
+    summary: '小微企业和商铺的网络需求有什么不同？移动企业宽带和专线产品介绍。',
+    tags: ['企业宽带', '专线', '商铺'], readTime: 5,
+    content: `
+      <h2>企业宽带 vs 家庭宽带</h2>
+      <table>
+        <tr><th>特性</th><th>家庭宽带</th><th>企业宽带/专线</th></tr>
+        <tr><td>上行速率</td><td>较低（不对称）</td><td>对称或更高上行</td></tr>
+        <tr><td>IP地址</td><td>共享动态IP</td><td>固定公网IP（可选）</td></tr>
+        <tr><td>SLA保障</td><td>尽力而为</td><td>有服务等级协议保障</td></tr>
+        <tr><td>故障响应</td><td>24小时内</td><td>4小时或更短</td></tr>
+        <tr><td>价格</td><td>低</td><td>中高</td></tr>
+      </table>
+
+      <h2>不同场景的企业解决方案</h2>
+      <ul>
+        <li><strong>小商铺/小办公室</strong>：移动商务宽带，300M-500M，价格接近家庭宽带</li>
+        <li><strong>中小企业</strong>：移动企业宽带，500M-1000M，含固定IP</li>
+        <li><strong>连锁店/多分支机构</strong>：SD-WAN 智能组网，多门店互联互通</li>
+        <li><strong>大型企业</strong>：专线接入，对称带宽，高SLA保障</li>
+      </ul>
+
+      <p>如需了解企业宽带方案，请拨打中国移动集团客户服务热线或联系您的客户经理。</p>
+    `
+  },
+  {
+    id: 'data-traffic', categoryId: 'business-guide', title: '手机流量科普：GB、套餐流量、闲时流量怎么算？', order: 4,
+    summary: '1GB流量能用多久？为什么流量总是这么快用完？帮你算清楚每一兆。',
+    tags: ['流量', '套餐', '数据'], readTime: 5,
+    content: `
+      <h2>流量单位换算</h2>
+      <p>1GB = 1024MB，1MB = 1024KB。</p>
+
+      <h2>常见应用的流量消耗</h2>
+      <table>
+        <tr><th>应用</th><th>消耗量（1小时）</th><th>1GB能用多久</th></tr>
+        <tr><td>刷抖音/快手</td><td>约 500MB-1GB</td><td>1-2小时</td></tr>
+        <tr><td>看高清视频</td><td>约 1GB-3GB</td><td>20分钟-1小时</td></tr>
+        <tr><td>微信视频通话</td><td>约 300MB-500MB</td><td>2-3小时</td></tr>
+        <tr><td>刷微信/微博</td><td>约 50MB-100MB</td><td>10-20小时</td></tr>
+        <tr><td>在线音乐</td><td>约 60MB-150MB</td><td>7-17小时</td></tr>
+        <tr><td>在线导航</td><td>约 30MB-60MB</td><td>17-34小时</td></tr>
+        <tr><td>刷网页/看新闻</td><td>约 30MB-60MB</td><td>17-34小时</td></tr>
+      </table>
+
+      <h2>省流量小技巧</h2>
+      <ul>
+        <li>WiFi环境下提前下载离线内容</li>
+        <li>视频APP调低默认清晰度（720P日常够用，4K太费流量）</li>
+        <li>关闭APP自动播放视频功能</li>
+        <li>定期检查哪些APP在后台偷跑流量</li>
+        <li>使用移动APP查看流量使用情况</li>
+      </ul>
+    `
+  },
+  {
+    id: 'faq', categoryId: 'business-guide', title: '常见问题FAQ：宽带故障、扣费疑问、业务办理', order: 5,
+    summary: '一口气解答在办理和使用中国移动业务过程中最常遇到的问题。',
+    tags: ['FAQ', '故障', '常见问题'], readTime: 6, featured: true,
+    content: `
+      <h2>宽带常见问题</h2>
+      <h3>Q：宽带突然连不上了怎么办？</h3>
+      <p>A：先检查光猫指示灯——PON灯不亮或LOS闪红灯说明光纤有问题，拨打10086报修。如果指示灯正常，重启光猫和路由器，90%的故障都能解决。</p>
+
+      <h3>Q：网速慢怎么检查？</h3>
+      <p>A：先用网线直连光猫测速，如果达标说明问题在WiFi/路由器；如果不达标打10086。</p>
+
+      <h3>Q：搬家了宽带能不能移机？</h3>
+      <p>A：可以！拨打10086申请移机，师傅会上门在新地址重新安装，一般收取少量移机费。新地址需有移动光纤覆盖。</p>
+
+      <h2>扣费相关问题</h2>
+      <h3>Q：为什么这个月话费比平时多？</h3>
+      <p>A：登录中国移动APP查看详细账单，常见原因：套餐外流量超了、增值业务续费、合约到期恢复原价。</p>
+
+      <h3>Q：如何取消不需要的增值业务？</h3>
+      <p>A：中国移动APP → 已开业务 → 找到不需要的业务 → 退订。也可以打10086转人工取消。</p>
+
+      <h2>办理相关</h2>
+      <h3>Q：可以代办宽带吗？</h3>
+      <p>A：可以，需要代办人和户主两人的身份证。最好由户主本人办理以避免审核不通过。</p>
+
+      <h3>Q：合约未到期能提前解约吗？</h3>
+      <p>A：可以，但可能需要支付违约金。金额按合同约定计算，建议先拨打10086咨询。</p>
+
+      <div class="highlight-box">
+        <h4>中国移动联系方式</h4>
+        <p>📞 客服热线：10086<br>📱 在线客服：中国移动APP<br>🏢 营业厅：携带身份证就近办理<br>🔧 宽带报修：10086-4</p>
+      </div>
+    `
+  }
+];
+
+/* ===== DOM Rendering Engine ===== */
+
+
+
+/** Main render dispatch */
+function renderPage(route, categories, articles) {
+  switch (route.page) {
+    case 'home': return renderHome(categories, articles);
+    case 'category': return renderCategoryPage(route.params.categoryId, categories, articles);
+    case 'article': return renderArticlePage(route.params.articleId, categories, articles);
+    case 'search': return renderSearchPage(route.params.q || '', articles);
+    default: return renderHome(categories, articles);
+  }
+}
+
+/** Update desktop nav active state */
+function updateNavActive(route) {
+  document.querySelectorAll('.header__nav-link').forEach(link => {
+    link.classList.remove('header__nav-link--active');
+  });
+  let activeCat = '';
+  if (route.page === 'category') activeCat = route.params.categoryId;
+  if (route.page === 'article') {
+    // Could determine from article data but nav highlights are simpler with data attribute
+  }
+  const match = document.querySelector(`[data-nav="${activeCat}"]`);
+  if (match) match.classList.add('header__nav-link--active');
+}
+
+/* ==================== HOME PAGE ==================== */
+function renderHome(categories, articles) {
+  const featuredArticles = articles.filter(a => a.featured).slice(0, 6);
+
+  return `
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero__inner">
+        <h1 class="hero__title">了解<span>移动业务</span>，<br>从这里开始</h1>
+        <p class="hero__subtitle">宽带怎么选？信号不好怎么办？光猫和路由器什么区别？在这里，用最通俗的语言，帮你搞清楚中国移动的每一项业务。</p>
+        <div class="hero__actions">
+          <a href="#/category/broadband-basics" class="btn btn--primary btn--lg">📡 了解宽带</a>
+          <a href="#/category/mobile" class="btn btn--outline btn--lg">📱 了解5G</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title">📚 业务知识分类</h2>
+          <p class="section__subtitle">六大分类，涵盖您关心的所有移动业务话题</p>
+        </div>
+        <div class="card-grid">
+          ${categories.map(cat => renderCategoryCard(cat, articles)).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Articles -->
+    <section class="home-featured">
+      <div class="container">
+        <h3 class="home-featured__title">🔥 热门推荐文章</h3>
+        <div class="card-grid">
+          ${featuredArticles.map(a => renderArticleCard(a, categories)).join('')}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section">
+      <div class="container container--narrow">
+        <div class="cta-box">
+          <h3>📞 需要办理业务？</h3>
+          <p>拨打电话 10086 或通过中国移动APP在线办理，也可以直接联系您的专属客户经理。</p>
+          <a href="#/search" class="btn btn--outline btn--lg">🔍 搜索更多知识</a>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderCategoryCard(cat, articles) {
+  const count = getCategoryArticles(articles, cat.id).length;
+  const colors = ['#00A650','#2196F3','#FF6B00','#7C4DFF','#E91E63','#00BCD4'];
+  const bg = colors[cat.order % colors.length];
+  return `
+    <a href="#/category/${cat.id}" class="category-card">
+      <div class="category-card__icon" style="background:${bg}">${cat.icon}</div>
+      <div class="category-card__title">${cat.name}</div>
+      <div class="category-card__desc">${cat.description}</div>
+      <div class="category-card__meta">
+        <span class="category-card__count">📄 ${count} 篇文章</span>
+        <span class="category-card__arrow">查看全部 →</span>
+      </div>
+    </a>
+  `;
+}
+
+function renderArticleCard(article, categories) {
+  const cat = categories.find(c => c.id === article.categoryId);
+  const tags = (article.tags || []).slice(0, 2);
+  return `
+    <a href="#/article/${article.id}" class="article-card">
+      <div class="article-card__tags">
+        ${tags.map(t => `<span class="article-card__tag">${t}</span>`).join('')}
+      </div>
+      <div class="article-card__title">${article.title}</div>
+      <div class="article-card__summary">${article.summary}</div>
+      <div class="article-card__meta">
+        ${cat ? `<span>📂 ${cat.name}</span>` : ''}
+        <span class="article-card__read-time">⏱ ${article.readTime} 分钟阅读</span>
+      </div>
+    </a>
+  `;
+}
+
+/* ==================== CATEGORY PAGE ==================== */
+function renderCategoryPage(categoryId, categories, articles) {
+  const cat = categories.find(c => c.id === categoryId);
+  if (!cat) return '<div class="container section"><p>分类不存在</p></div>';
+
+  const catArticles = getCategoryArticles(articles, categoryId).sort((a, b) => a.order - b.order);
+  const colors = ['#00A650','#2196F3','#FF6B00','#7C4DFF','#E91E63','#00BCD4'];
+  const bg = colors[cat.order % colors.length];
+
+  const otherCats = categories.filter(c => c.id !== categoryId);
+
+  return `
+    <div class="category-header">
+      <div class="category-header__icon" style="background:${bg}">${cat.icon}</div>
+      <h1 class="category-header__title">${cat.name}</h1>
+      <p class="category-header__desc">${cat.description}</p>
+    </div>
+
+    <section class="category-page">
+      <div class="container">
+        <div class="category-page__layout">
+          <main class="category-page__main">
+            ${catArticles.map((a, i) => renderArticleListItem(a, i + 1)).join('')}
+            ${catArticles.length === 0 ? '<p style="text-align:center;color:var(--cm-text-light);padding:48px">该分类暂无文章</p>' : ''}
+          </main>
+
+          <aside class="sidebar">
+            <div class="sidebar__section">
+              <h4 class="sidebar__title">📂 其他分类</h4>
+              ${otherCats.map(c => `
+                <a href="#/category/${c.id}" class="sidebar__link">${c.icon} ${c.name}</a>
+              `).join('')}
+            </div>
+            ${catArticles.length > 0 ? `
+            <div class="sidebar__section">
+              <h4 class="sidebar__title">🔥 推荐文章</h4>
+              ${catArticles.filter(a => a.featured).slice(0, 3).map(a => `
+                <a href="#/article/${a.id}" class="sidebar__link" style="font-size:13px">📄 ${a.title}</a>
+              `).join('')}
+            </div>
+            ` : ''}
+          </aside>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderArticleListItem(article, num) {
+  const tags = (article.tags || []).slice(0, 3);
+  return `
+    <a href="#/article/${article.id}" class="article-list-item">
+      <span class="article-list-item__num">${String(num).padStart(2, '0')}</span>
+      <div class="article-list-item__content">
+        <div class="article-list-item__title">${article.title}</div>
+        <div class="article-list-item__summary">${article.summary}</div>
+        <div class="article-list-item__meta">
+          <span>⏱ ${article.readTime} 分钟</span>
+          ${tags.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
+      </div>
+    </a>
+  `;
+}
+
+/* ==================== ARTICLE PAGE ==================== */
+function renderArticlePage(articleId, categories, articles) {
+  const article = getArticle(articles, articleId);
+  if (!article) return '<div class="container section"><p>文章不存在</p></div>';
+
+  const cat = categories.find(c => c.id === article.categoryId);
+  const tags = article.tags || [];
+
+  // Prev / next
+  const catArticles = getCategoryArticles(articles, article.categoryId).sort((a, b) => a.order - b.order);
+  const idx = catArticles.findIndex(a => a.id === articleId);
+  const prevArticle = idx > 0 ? catArticles[idx - 1] : null;
+  const nextArticle = idx < catArticles.length - 1 ? catArticles[idx + 1] : null;
+
+  // Related
+  const relatedArticles = article.relatedArticles
+    ? article.relatedArticles.map(id => getArticle(articles, id)).filter(Boolean)
+    : catArticles.filter(a => a.id !== articleId).slice(0, 3);
+
+  return `
+    <article class="article-page">
+      <div class="container container--narrow">
+        <nav class="breadcrumb" aria-label="面包屑">
+          <a href="#/home">首页</a>
+          <span class="breadcrumb__sep">›</span>
+          ${cat ? `<a href="#/category/${cat.id}">${cat.name}</a>` : ''}
+          <span class="breadcrumb__sep">›</span>
+          <span>${article.title}</span>
+        </nav>
+
+        <header class="article-header">
+          <h1 class="article-title">${article.title}</h1>
+          <div class="article-meta">
+            ${cat ? `<span>📂 ${cat.name}</span>` : ''}
+            <span>⏱ ${article.readTime} 分钟阅读</span>
+            <span>📅 ${article.date || '2026-05'}</span>
+          </div>
+          ${tags.length ? `<div class="tags" style="margin-top:12px">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+        </header>
+
+        <div class="article-divider"></div>
+
+        <div class="article-content">
+          ${article.content}
+        </div>
+
+        ${renderCtaBox()}
+
+        <nav class="article-nav" aria-label="上一篇/下一篇">
+          ${prevArticle ? `
+            <a href="#/article/${prevArticle.id}" class="article-nav__link">
+              <div class="article-nav__label">← 上一篇</div>
+              <div class="article-nav__title">${prevArticle.title}</div>
+            </a>
+          ` : '<div></div>'}
+          ${nextArticle ? `
+            <a href="#/article/${nextArticle.id}" class="article-nav__link" style="text-align:right">
+              <div class="article-nav__label">下一篇 →</div>
+              <div class="article-nav__title">${nextArticle.title}</div>
+            </a>
+          ` : '<div></div>'}
+        </nav>
+      </div>
+    </article>
+
+    ${relatedArticles.length ? `
+    <section class="related-articles">
+      <div class="container">
+        <h3 class="related-articles__title">📖 相关文章</h3>
+        <div class="card-grid card-grid--sm">
+          ${relatedArticles.map(a => renderArticleCard(a, categories)).join('')}
+        </div>
+      </div>
+    </section>
+    ` : ''}
+  `;
+}
+
+function renderCtaBox() {
+  return `
+    <div class="cta-box">
+      <h3>📞 需要办理中国移动业务？</h3>
+      <p>拨打 10086 或登录中国移动APP，了解更多套餐详情和优惠活动。也可联系您的专属客户经理获取一对一服务。</p>
+      <a href="#/category/business-guide" class="btn btn--outline">查看业务指南 →</a>
+    </div>
+  `;
+}
+
+/* ==================== SEARCH PAGE ==================== */
+function renderSearchPage(query, articles) {
+  let resultsHtml = '';
+  if (query) {
+    const results = searchArticles(articles, query);
+    if (results.length === 0) {
+      resultsHtml = '<p style="text-align:center;color:var(--cm-text-light);padding:48px">🔍 未找到与"<strong>' + query + '</strong>"相关的内容，请尝试其他关键词</p>';
+    } else {
+      resultsHtml = `
+        <p style="color:var(--cm-text-light);margin-bottom:16px">找到 <strong>${results.length}</strong> 篇与"<strong>${query}</strong>"相关的文章</p>
+        ${results.map(a => renderArticleListItem(a, 0)).join('')}
+      `;
+    }
+  }
+
+  return `
+    <section class="search-page">
+      <div class="container container--narrow">
+        <input type="text" class="search-page__input" id="searchPageInput"
+               placeholder="🔍 搜索移动业务知识..." value="${query}"
+               autofocus>
+        <div id="searchPageResults">
+          ${resultsHtml || '<p style="text-align:center;color:var(--cm-text-light);padding:48px">输入关键词开始搜索...</p>'}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+
+// ===== App Init =====
+var mainContent = document.getElementById("mainContent");
+var searchOverlay = document.getElementById("searchOverlay");
+var searchInput = document.getElementById("searchInput");
+var searchResults = document.getElementById("searchResults");
+var searchBtn = document.getElementById("searchBtn");
+var searchCloseBtn = document.getElementById("searchCloseBtn");
+var mobileNav = document.getElementById("mobileNav");
+var mobileOverlay = document.getElementById("mobileOverlay");
+var menuBtn = document.getElementById("menuBtn");
+var mobileCloseBtn = document.getElementById("mobileCloseBtn");
+var backToTop = document.getElementById("backToTop");
+
+function openSearch() {
+  searchOverlay.classList.add("search-overlay--open");
+  searchInput.focus(); searchInput.value = ""; searchResults.innerHTML = "";
+}
+function closeSearch() { searchOverlay.classList.remove("search-overlay--open"); }
+searchBtn.addEventListener("click", openSearch);
+searchCloseBtn.addEventListener("click", closeSearch);
+searchOverlay.addEventListener("click", function(e) { if (e.target === searchOverlay) closeSearch(); });
+document.addEventListener("keydown", function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") { e.preventDefault(); openSearch(); }
+  if (e.key === "Escape") closeSearch();
+});
+searchInput.addEventListener("input", function(e) {
+  var q = e.target.value.trim();
+  if (!q) { searchResults.innerHTML = ""; return; }
+  var results = searchArticles(articles, q);
+  if (results.length === 0) {
+    searchResults.innerHTML = '<div class="search-empty">未找到相关内容，试试其他关键词</div>';
+    return;
+  }
+  searchResults.innerHTML = results.slice(0, 15).map(function(a) {
+    var cat = categories.find(function(c) { return c.id === a.categoryId; });
+    return '<a href="#/article/' + a.id + '" class="search-result-item"><span class="search-result-cat">' + (cat ? cat.name : "") + '</span><span class="search-result-title">' + a.title + '</span><span class="search-result-summary">' + a.summary + '</span></a>';
+  }).join("");
+  searchResults.querySelectorAll("a").forEach(function(l) { l.addEventListener("click", closeSearch); });
+});
+
+function openMobileMenu() {
+  mobileNav.classList.add("mobile-nav--open");
+  mobileOverlay.classList.add("mobile-nav-overlay--visible");
+  mobileOverlay.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+function closeMobileMenu() {
+  mobileNav.classList.remove("mobile-nav--open");
+  mobileOverlay.classList.remove("mobile-nav-overlay--visible");
+  setTimeout(function() { mobileOverlay.style.display = "none"; }, 300);
+  document.body.style.overflow = "";
+}
+menuBtn.addEventListener("click", openMobileMenu);
+mobileCloseBtn.addEventListener("click", closeMobileMenu);
+mobileOverlay.addEventListener("click", closeMobileMenu);
+document.getElementById("mobileNavLinks").addEventListener("click", function(e) {
+  if (e.target.tagName === "A") setTimeout(closeMobileMenu, 200);
+});
+
+window.addEventListener("scroll", function() {
+  if (backToTop) backToTop.classList.toggle("back-to-top--visible", window.scrollY > 400);
+});
+if (backToTop) backToTop.addEventListener("click", scrollToTop);
+
+onRouteChange(function(route) {
+  if (mainContent) mainContent.innerHTML = renderPage(route, categories, articles);
+  updateNavActive(route);
+  scrollToTop();
+});
+initRouter(parseRoute);
+
+})();
+  </script>
+</body>
+</html>
