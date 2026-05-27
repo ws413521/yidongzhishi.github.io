@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国移动业务办理助手</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f5f0f0; min-height: 100vh;
+  display: flex; justify-content: center; align-items: flex-start; padding: 20px;
+}
+.container {
+  background: #fff; border-radius: 16px; box-shadow: 0 8px 32px rgba(180,0,0,0.12);
+  width: 100%; max-width: 720px; overflow: hidden; margin-top: 10px;
+}
+.header {
+  background: linear-gradient(135deg, #c62828, #d32f2f);
+  color: #fff; padding: 24px 28px; text-align: center;
+}
+.header h1 { font-size: 22px; font-weight: 700; }
+.header .sub { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+.steps { display: flex; background: #fef0f0; border-bottom: 1px solid #f5d0d0; }
+.step {
+  flex: 1; text-align: center; padding: 12px 8px; font-size: 12px; color: #999;
+  transition: all 0.3s;
+}
+.step.active { color: #c62828; font-weight: 700; }
+.step.done { color: #c62828; }
+.step .dot {
+  width: 22px; height: 22px; border-radius: 50%; background: #ddd;
+  margin: 0 auto 4px; line-height: 22px; font-size: 11px; color: #fff; transition: all 0.3s;
+}
+.step.active .dot { background: #c62828; }
+.step.done .dot { background: #c62828; }
+.content { padding: 24px 28px; min-height: 360px; }
+.section-title { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+.section-desc { font-size: 13px; color: #888; margin-bottom: 20px; }
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.card {
+  border: 2px solid #e5e5e5; border-radius: 12px; padding: 20px 16px;
+  cursor: pointer; transition: all 0.2s; text-align: center; position: relative;
+}
+.card:hover { border-color: #d32f2f; background: #fff5f5; }
+.card.selected { border-color: #d32f2f; background: #ffebee; box-shadow: 0 0 0 3px rgba(211,47,47,0.12); }
+.card .icon { font-size: 32px; margin-bottom: 8px; }
+.card .title { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+.card .hint { font-size: 12px; color: #999; margin-top: 4px; }
+.card .check {
+  position: absolute; top: 8px; right: 10px; width: 20px; height: 20px;
+  border-radius: 50%; background: #d32f2f; color: #fff; font-size: 12px;
+  line-height: 20px; display: none;
+}
+.card.selected .check { display: block; }
+.radio-group { display: flex; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+.radio-item { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 15px; }
+.radio-item input[type="radio"] { accent-color: #d32f2f; width: 18px; height: 18px; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 14px; font-weight: 600; color: #333; margin-bottom: 6px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px;
+  font-size: 15px; transition: border 0.2s; outline: none; font-family: inherit;
+}
+.form-group input:focus, .form-group select:focus { border-color: #d32f2f; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.plan-card {
+  border: 1.5px solid #e5e5e5; border-radius: 10px; padding: 14px 16px;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 8px;
+}
+.plan-card:hover { border-color: #d32f2f; }
+.plan-card.selected { border-color: #d32f2f; background: #ffebee; }
+.plan-card .price { font-size: 20px; font-weight: 700; color: #c62828; }
+.plan-card .price span { font-size: 13px; font-weight: 400; }
+.plan-card .specs { font-size: 13px; color: #666; margin-top: 4px; }
+.plan-card .devices { font-size: 12px; color: #999; margin-top: 2px; }
+.plan-card .total { font-size: 14px; color: #c62828; font-weight: 700; margin-top: 4px; }
+.plan-category {
+  font-size: 15px; font-weight: 700; color: #c62828; margin: 18px 0 10px;
+  padding-bottom: 6px; border-bottom: 2px solid #ffebee;
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+}
+.plan-category .arrow { transition: transform 0.3s; font-size: 12px; }
+.plan-category.collapsed .arrow { transform: rotate(-90deg); }
+.plan-list { overflow: hidden; transition: max-height 0.4s ease; }
+.plan-list.collapsed { max-height: 0 !important; }
+.hint-box { background: #fff8e1; border-left: 3px solid #ffc107; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; color: #8b6914; margin-bottom: 16px; }
+.info-box { background: #ffebee; border-left: 3px solid #d32f2f; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; color: #7f1d1d; margin-bottom: 16px; }
+.warn-box { background: #fff0f0; border-left: 3px solid #c62828; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13px; color: #8b0000; margin-bottom: 16px; }
+.btns { display: flex; gap: 12px; justify-content: flex-end; padding: 0 28px 24px; flex-wrap: wrap; }
+.btn {
+  padding: 10px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.2s; font-family: inherit;
+}
+.btn-back { background: #f0f0f0; color: #666; }
+.btn-back:hover { background: #e0e0e0; }
+.btn-next { background: #d32f2f; color: #fff; }
+.btn-next:hover { background: #b71c1c; }
+.btn-submit { background: #c62828; color: #fff; padding: 12px 36px; font-size: 16px; }
+.btn-submit:hover { background: #b71c1c; }
+.btn-print { background: #555; color: #fff; }
+.btn-print:hover { background: #333; }
+
+.overlay {
+  display: none; position: fixed; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.5); z-index:1000;
+  justify-content: center; align-items: center; padding:20px;
+}
+.overlay.show { display: flex; }
+.summary-card {
+  background: #fff; border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+  width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+}
+.summary-card .card-header {
+  background: linear-gradient(135deg, #c62828, #d32f2f);
+  color: #fff; padding: 20px 24px; border-radius: 16px 16px 0 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.summary-card .card-header h2 { font-size: 18px; }
+.summary-card .card-header .close-btn {
+  background: rgba(255,255,255,0.2); border: none; color: #fff;
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  font-size: 18px; line-height: 30px; text-align: center;
+}
+.summary-card .card-body { padding: 20px 24px; }
+.summary-card .card-footer { padding: 0 24px 20px; text-align: center; }
+.summary-row { display: flex; padding: 9px 0; border-bottom: 1px solid #f5e0e0; font-size: 14px; }
+.summary-row .label { color: #888; width: 130px; flex-shrink: 0; }
+.summary-row .value { color: #1a1a1a; font-weight: 600; flex: 1; }
+.plan-detail {
+  background: #fff5f5; border: 1px solid #f5d0d0; border-radius: 8px;
+  padding: 10px 14px; margin-top: 4px; margin-bottom: 8px; font-size: 13px; color: #5a1a1a;
+}
+.hidden { display: none !important; }
+.footer { text-align: center; padding: 0 28px 20px; font-size: 12px; color: #bbb; }
+
+/* ==================== 响应式 ==================== */
+
+/* 大屏桌面 (≥1200px)：居中留白，限制宽度 */
+@media (min-width: 1200px) {
+  .container { max-width: 800px; }
+  .content { padding: 32px 40px; }
+  .btns { padding: 0 40px 28px; }
+  .header { padding: 28px 40px; }
+  .header h1 { font-size: 24px; }
+  .card { padding: 24px 20px; }
+  .card .icon { font-size: 36px; }
+}
+
+/* 常规桌面 / iPad横屏 (769px–1199px)：目前默认即适用 */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .container { max-width: 720px; }
+}
+
+/* iPad竖屏 / 小平板 (481px–768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  body { padding: 12px; align-items: flex-start; }
+  .container { max-width: 100%; border-radius: 12px; margin-top: 0; }
+  .header { padding: 20px 20px; }
+  .header h1 { font-size: 19px; }
+  .header .sub { font-size: 12px; }
+  .content { padding: 20px 20px; min-height: 300px; }
+  .btns { padding: 0 20px 20px; gap: 10px; }
+  .footer { padding: 0 20px 16px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { padding: 16px 12px; }
+  .card .icon { font-size: 28px; }
+  .card .title { font-size: 14px; }
+  .form-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .section-title { font-size: 16px; }
+  .btn { padding: 10px 20px; font-size: 14px; }
+  .btn-submit { padding: 12px 28px; font-size: 15px; }
+  .plan-card .price { font-size: 18px; }
+  .summary-row .label { width: 100px; font-size: 13px; }
+  .summary-row .value { font-size: 13px; }
+  .summary-card { max-width: 95%; }
+  .summary-card .card-footer { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .summary-card .card-footer .btn { margin-left: 0 !important; }
+}
+
+/* 手机 (≤480px) */
+@media (max-width: 480px) {
+  body { padding: 0; align-items: flex-start; background: #fff; }
+  .container { max-width: 100%; border-radius: 0; box-shadow: none; margin-top: 0; min-height: 100vh; }
+  .header { padding: 16px 14px; border-radius: 0; }
+  .header h1 { font-size: 17px; }
+  .header .sub { font-size: 11px; }
+  .steps { border-radius: 0; }
+  .step { padding: 10px 4px; font-size: 10px; }
+  .step .dot { width: 18px; height: 18px; line-height: 18px; font-size: 10px; }
+  .content { padding: 16px 14px; min-height: 280px; }
+  .btns { padding: 0 14px 16px; gap: 8px; flex-direction: column; }
+  .btn { width: 100%; text-align: center; padding: 12px 16px; font-size: 15px; }
+  .btn-back { order: 2; }
+  .btn-next { order: 1; }
+  .btn-submit { order: 1; width: 100%; }
+  .btn-print { order: 3; width: 100%; }
+  .footer { padding: 0 14px 14px; font-size: 11px; }
+  .cards { grid-template-columns: 1fr; gap: 8px; }
+  .card { padding: 14px 12px; border-radius: 10px; display: flex; align-items: center; gap: 12px; text-align: left; }
+  .card .icon { font-size: 26px; margin-bottom: 0; flex-shrink: 0; }
+  .card .title { font-size: 14px; }
+  .card .hint { font-size: 11px; }
+  .card .check { top: 6px; right: 8px; width: 18px; height: 18px; line-height: 18px; font-size: 11px; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { font-size: 13px; }
+  .form-group input, .form-group select { padding: 11px 12px; font-size: 16px; /* 16px 防iOS缩放 */ border-radius: 6px; }
+  .section-title { font-size: 15px; }
+  .section-desc { font-size: 12px; margin-bottom: 14px; }
+  .radio-group { gap: 12px; }
+  .radio-item { font-size: 14px; }
+  .radio-item input[type="radio"] { width: 20px; height: 20px; }
+  .plan-card { padding: 12px 14px; border-radius: 8px; }
+  .plan-card .price { font-size: 17px; }
+  .plan-card .specs { font-size: 12px; }
+  .plan-card .devices { font-size: 11px; }
+  .plan-category { font-size: 14px; padding: 10px 0 6px; }
+  .hint-box, .info-box, .warn-box { padding: 8px 12px; font-size: 12px; }
+  .overlay { padding: 10px; align-items: flex-end; }
+  .summary-card { max-width: 100%; border-radius: 16px 16px 0 0; max-height: 90vh; }
+  .summary-card .card-header { padding: 16px 18px; border-radius: 16px 16px 0 0; }
+  .summary-card .card-header h2 { font-size: 16px; }
+  .summary-card .card-body { padding: 16px 18px; }
+  .summary-card .card-footer { padding: 0 18px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .summary-card .card-footer .btn { width: 100%; margin-left: 0 !important; }
+  .summary-row { padding: 7px 0; font-size: 13px; }
+  .summary-row .label { width: 90px; font-size: 12px; }
+  .summary-row .value { font-size: 12px; }
+  .plan-detail { padding: 8px 10px; font-size: 12px; }
+}
+
+/* 超小屏 (≤360px) */
+@media (max-width: 360px) {
+  .header h1 { font-size: 15px; }
+  .step { font-size: 9px; }
+  .step .dot { width: 16px; height: 16px; line-height: 16px; font-size: 9px; }
+  .content { padding: 12px 10px; }
+  .btns { padding: 0 10px 12px; }
+  .card .title { font-size: 13px; }
+  .card .icon { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="container" id="mainApp">
+  <div class="header">
+    <h1>中国移动业务办理助手</h1>
+    <div class="sub">手机流量 | 家庭宽带 | 全屋智能 | 一站式服务</div>
+  </div>
+  <div class="steps">
+    <div class="step active" data-step="1"><div class="dot">1</div>选择业务</div>
+    <div class="step" data-step="2"><div class="dot">2</div>填写信息</div>
+    <div class="step" data-step="3"><div class="dot">3</div>确认提交</div>
+  </div>
+  <div class="content" id="content"></div>
+  <div class="btns" id="buttons"></div>
+  <div class="footer">中国移动通信集团 | 业务办理助手 v3.0</div>
+</div>
+
+<div class="overlay" id="summaryOverlay">
+  <div class="summary-card">
+    <div class="card-header">
+      <h2>📋 业务办理汇总</h2>
+      <button class="close-btn" onclick="closeSummary()">✕</button>
+    </div>
+    <div class="card-body" id="summaryBody"></div>
+    <div class="card-footer">
+      <button class="btn btn-submit" onclick="confirmSubmit()">✓ 确认提交</button>
+      <button class="btn btn-print" style="margin-left:8px;" onclick="window.print()">🖨 打印</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 套餐数据 ====================
+const PHONE_PLANS = [
+  { name:'套餐一', price:39, data:'100G', talk:'100分钟', desc:'月租￥39/月 流量100G 通话100分钟' },
+  { name:'套餐二', price:59, data:'130G', talk:'200分钟', desc:'月租￥59/月 流量130G 通话200分钟' },
+];
+
+const BB_500M_NEW = [
+  { name:'套餐一', price:59, data:'100G', talk:'100分钟', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { name:'套餐二', price:69, data:'100G', talk:'100分钟', devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+  { name:'套餐三', price:79, data:'130G', talk:'200分钟', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { name:'套餐四', price:89, data:'130G', talk:'200分钟', devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+];
+const BB_FTTR_NEW = [
+  { name:'套餐一', price:69, data:'100G', talk:'100分钟', devices:'带设备：主路由+从路由' },
+  { name:'套餐二', price:89, data:'100G', talk:'100分钟', devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+  { name:'套餐三', price:89, data:'130G', talk:'200分钟', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { name:'套餐四', price:109, data:'130G', talk:'200分钟', devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+];
+const BB_F3_NEW = [
+  { name:'套餐一', price:79, data:'100G', talk:'100分钟', devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+  { name:'套餐二', price:99, data:'130G', talk:'200分钟', devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+];
+
+// 老号码加装 — addon 是叠加金额
+const BB_500M_ADDON = [
+  { name:'套餐一', addon:20, devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { name:'套餐二', addon:30, devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+];
+const BB_FTTR_ADDON = [
+  { name:'套餐一', addon:30, devices:'带设备：主路由+从路由' },
+  { name:'套餐二', addon:30, devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+];
+const BB_F3_ADDON = [
+  { name:'套餐一', addon:40, devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+];
+
+// ==================== 状态 ====================
+let state = {};
+
+function initState() {
+  return {
+    step: 1, bizType: null, isOnsite: null,
+    phoneCommunity: '', phoneBuilding: '', phoneCardCount: '1', phonePlan: null,
+    bbCommunity: '', bbBuilding: '', bbType: null,
+    bbIsLocal: null, bbAddonNumber: '', bbMinFeeOk: null, bbOriginPlan: '', bbPlan: null,
+    piOperator: null,
+    piCommunity: '', piBuilding: '', piCardCount: '1',
+    piContractExpired: null, piContractExpireDate: '',
+    piMainNumber: '', piSubNumber1: '', piSubNumber2: '', piPlan: null,
+    daPhone: '', daIdCard: '',
+  };
+}
+state = initState();
+
+// ==================== 渲染 ====================
+function render() {
+  updateSteps();
+  const c = document.getElementById('content');
+  const b = document.getElementById('buttons');
+  if (state.step === 1) renderStep1(c, b);
+  else if (state.step === 2) renderStep2(c, b);
+  else if (state.step === 3) renderStep3(c, b);
+}
+
+function updateSteps() {
+  document.querySelectorAll('.step').forEach((el, i) => {
+    el.classList.remove('active','done');
+    if (i+1 < state.step) el.classList.add('done');
+    if (i+1 === state.step) el.classList.add('active');
+  });
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+// 解析原套餐金额（支持输入数字、带"元"字、套餐名+数字等）
+function parseOriginPlanPrice(raw) {
+  if (!raw || !raw.trim()) return 0;
+  const s = raw.trim();
+  const m = s.match(/(\d+)\s*(?:元)?/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+// ==================== Step 1 ====================
+function renderStep1(c, b) {
+  c.innerHTML = `
+    <div class="section-title">请选择您要办理的业务</div>
+    <div class="section-desc">请选择其中一项，其他不可同时选择</div>
+    <div class="cards" id="bizCards">
+      <div class="card" data-biz="phone">
+        <div class="icon">📱</div><div class="title">办理新手机卡</div>
+        <div class="hint">月租39元起</div><div class="check">✓</div>
+      </div>
+      <div class="card" data-biz="broadband">
+        <div class="icon">📡</div><div class="title">办理宽带</div>
+        <div class="hint">500M/1000M可选</div><div class="check">✓</div>
+      </div>
+      <div class="card" data-biz="portin">
+        <div class="icon">🔄</div><div class="title">办理携号转网</div>
+        <div class="hint">电信/联通转移动</div><div class="check">✓</div>
+      </div>
+      <div class="card" data-biz="data">
+        <div class="icon">📶</div><div class="title">办理增加流量</div>
+        <div class="hint">短信即可办理</div><div class="check">✓</div>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:20px;">是否上门办理？</div>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="onsite" value="yes"> 是（上门办理）</label>
+      <label class="radio-item"><input type="radio" name="onsite" value="no"> 否（自行前往）</label>
+    </div>
+    <div id="onsiteNote"></div>
+  `;
+  b.innerHTML = `<button class="btn btn-next" onclick="nextStep()">下一步 →</button>`;
+
+  if (state.bizType) {
+    const card = c.querySelector(`[data-biz="${state.bizType}"]`);
+    if (card) card.classList.add('selected');
+  }
+  if (state.isOnsite !== null) {
+    c.querySelector(`input[name="onsite"][value="${state.isOnsite?'yes':'no'}"]`).checked = true;
+  }
+  updateOnsiteNote();
+
+  c.querySelectorAll('#bizCards .card').forEach(card => {
+    card.addEventListener('click', () => {
+      c.querySelectorAll('#bizCards .card').forEach(x => x.classList.remove('selected'));
+      card.classList.add('selected');
+      state.bizType = card.dataset.biz;
+      if (state.bizType === 'data') {
+        state.isOnsite = false;
+        c.querySelector('input[name="onsite"][value="no"]').checked = true;
+      }
+      updateOnsiteNote();
+    });
+  });
+  c.querySelectorAll('input[name="onsite"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.isOnsite = r.value === 'yes';
+      updateOnsiteNote();
+    });
+  });
+
+  function updateOnsiteNote() {
+    const note = document.getElementById('onsiteNote');
+    if (state.isOnsite === true) {
+      note.innerHTML = '<div class="info-box">工作人员将携带设备上门为您办理，请准备好本人身份证原件。</div>';
+    } else if (state.isOnsite === false) {
+      if (state.bizType === 'phone' || state.bizType === 'broadband') {
+        note.innerHTML = '<div class="info-box">温馨提示：请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>';
+      } else if (state.bizType === 'portin') {
+        note.innerHTML = '<div class="info-box">请携带本人身份证原件前往就近营业厅办理。</div>';
+      } else {
+        note.innerHTML = '<div class="info-box">请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>';
+      }
+    } else {
+      note.innerHTML = '';
+    }
+  }
+}
+
+// ==================== Step 2 ====================
+function renderStep2(c, b) {
+  if (!state.bizType) { alert('请先选择业务类型'); state.step=1; render(); return; }
+  if (state.isOnsite === null && state.bizType !== 'data') { alert('请选择是否上门办理'); state.step=1; render(); return; }
+
+  let html = '';
+  if (state.bizType === 'phone') html = renderPhoneForm();
+  else if (state.bizType === 'broadband') html = renderBroadbandForm();
+  else if (state.bizType === 'portin') html = renderPortinForm();
+  else if (state.bizType === 'data') html = renderDataForm();
+
+  c.innerHTML = html;
+  b.innerHTML = `
+    <button class="btn btn-back" onclick="state.step=1;render()">← 返回</button>
+    <button class="btn btn-next" onclick="validateAndNext()">下一步 →</button>
+  `;
+  bindStep2Events(c);
+}
+
+// --- 新手机卡 ---
+function renderPhoneForm() {
+  let h = `<div class="section-title">📱 办理新手机卡</div><div class="section-desc">请填写以下信息</div>`;
+  if (state.isOnsite) {
+    h += `<div class="hint-box">提示：最多可办理2张副卡，加主卡共3张。需携带本人身份证原件。</div>`;
+  } else {
+    h += `<div class="info-box">温馨提示：请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>`;
+  }
+  // 无论是否上门，都显示表单
+  h += `
+    <div class="form-row">
+      <div class="form-group"><label>小区名称</label><input id="f_phoneCommunity" placeholder="小区名称" value="${esc(state.phoneCommunity)}"></div>
+      <div class="form-group"><label>楼号</label><input id="f_phoneBuilding" placeholder="楼号/门牌号" value="${esc(state.phoneBuilding)}"></div>
+    </div>
+    <div class="form-group"><label>需要几张卡</label>
+      <select id="f_phoneCardCount">
+        <option value="1" ${state.phoneCardCount==='1'?'selected':''}>1张（主卡）</option>
+        <option value="2" ${state.phoneCardCount==='2'?'selected':''}>2张（主卡+1副卡）</option>
+        <option value="3" ${state.phoneCardCount==='3'?'selected':''}>3张（主卡+2副卡）</option>
+      </select>
+    </div>
+    <div class="section-title" style="margin-top:16px;font-size:15px;">手机新卡套餐</div>
+    <div id="phonePlans">${renderPlanCards(PHONE_PLANS, 'phonePlan', state.phonePlan, 'phone')}</div>`;
+  return h;
+}
+
+// --- 宽带 ---
+function renderBroadbandForm() {
+  let h = `<div class="section-title">📡 办理宽带</div><div class="section-desc">请填写以下信息</div>`;
+  if (state.isOnsite) {
+    h += `
+    <div class="form-row">
+      <div class="form-group"><label>小区名称</label><input id="f_bbCommunity" placeholder="小区名称" value="${esc(state.bbCommunity)}"></div>
+      <div class="form-group"><label>楼号</label><input id="f_bbBuilding" placeholder="楼号/门牌号" value="${esc(state.bbBuilding)}"></div>
+    </div>`;
+  } else {
+    h += `<div class="info-box">温馨提示：请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>`;
+  }
+  h += `
+    <div class="section-title" style="font-size:15px;">宽带类型</div>
+    <div class="radio-group">
+      <label class="radio-item"><input type="radio" name="bbType" value="new" ${state.bbType==='new'?'checked':''}> 办理新宽带</label>
+      <label class="radio-item"><input type="radio" name="bbType" value="addon" ${state.bbType==='addon'?'checked':''}> 老号码加装宽带</label>
+    </div>
+    <div id="bbNewSection" class="${state.bbType!=='new'?'hidden':''}">
+      <div class="section-title" style="font-size:15px;">新装宽带套餐</div>
+      ${renderNewBBPlanGroups('bbPlan')}
+    </div>
+    <div id="bbAddonSection" class="${state.bbType!=='addon'?'hidden':''}">
+      <div class="form-group"><label>您的手机号是否为咸阳归属地？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="bbIsLocal" value="yes" ${state.bbIsLocal===true?'checked':''}> 是</label>
+          <label class="radio-item"><input type="radio" name="bbIsLocal" value="no" ${state.bbIsLocal===false?'checked':''}> 否</label>
+        </div>
+      </div>
+      <div id="bbLocalNo" class="${state.bbIsLocal===false?'':'hidden'}">
+        <div class="warn-box">非咸阳归属地，您的号码办理不了宽带，请先办理一张咸阳归属地手机卡后，方可办理宽带。</div>
+      </div>
+      <div id="bbLocalYes" class="${state.bbIsLocal===true?'':'hidden'}">
+        <div class="form-group"><label>请输入您的号码</label><input id="f_bbAddonNumber" placeholder="请输入手机号码" value="${esc(state.bbAddonNumber)}"></div>
+        <div class="form-group"><label>每月最低资费是否大于39元？</label>
+          <div class="radio-group">
+            <label class="radio-item"><input type="radio" name="bbMinFeeOk" value="yes" ${state.bbMinFeeOk===true?'checked':''}> 是</label>
+            <label class="radio-item"><input type="radio" name="bbMinFeeOk" value="no" ${state.bbMinFeeOk===false?'checked':''}> 否</label>
+          </div>
+        </div>
+        <div id="bbMinFeeNo" class="${state.bbMinFeeOk===false?'':'hidden'}">
+          <div class="warn-box">您的号码办理不了宽带，请选择办理新宽带。</div>
+        </div>
+        <div id="bbMinFeeYes" class="${state.bbMinFeeOk===true?'':'hidden'}">
+          <div class="form-group"><label>原手机套餐 <span style="font-weight:400;color:#999;font-size:12px;">（输入套餐金额，用于自动计算加装总价）</span></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input id="f_bbOriginPlan" placeholder="如：39元套餐 / 58元套餐" value="${esc(state.bbOriginPlan)}" style="flex:1;">
+              <span style="font-size:13px;color:#888;white-space:nowrap;" id="originPricePreview"></span>
+            </div>
+          </div>
+          <div class="section-title" style="font-size:15px;">老号码加装宽带套餐</div>
+          ${renderAddonBBPlanGroups('bbPlan')}
+        </div>
+      </div>
+    </div>`;
+  return h;
+}
+
+function renderNewBBPlanGroups(planKey) {
+  const groups = [
+    { id:'bb500', title:'500M普通宽带家庭套餐', plans: BB_500M_NEW },
+    { id:'bbFttr', title:'1000M+FTTR全屋光网套餐', plans: BB_FTTR_NEW },
+    { id:'bbF3', title:'1000M+F3一体机全屋光网套餐', plans: BB_F3_NEW },
+  ];
+  return groups.map(g => `
+    <div class="plan-category" onclick="togglePlanGroup(this)" data-group="${g.id}"><span>${g.title}</span><span class="arrow">▼</span></div>
+    <div class="plan-list" id="${g.id}List">${renderPlanCards(g.plans, planKey, state[planKey], g.id)}</div>
+  `).join('');
+}
+
+function renderAddonBBPlanGroups(planKey) {
+  const groups = [
+    { id:'bbAddon500', title:'500M普通宽带家庭套餐', plans: BB_500M_ADDON },
+    { id:'bbAddonFttr', title:'1000M+FTTR全屋光网套餐', plans: BB_FTTR_ADDON },
+    { id:'bbAddonF3', title:'1000M+F3一体机全屋光网套餐', plans: BB_F3_ADDON },
+  ];
+  return groups.map(g => `
+    <div class="plan-category" onclick="togglePlanGroup(this)" data-group="${g.id}"><span>${g.title}</span><span class="arrow">▼</span></div>
+    <div class="plan-list" id="${g.id}List">${renderAddonPlanCards(g.plans, planKey, state[planKey], g.id)}</div>
+  `).join('');
+}
+
+function renderPlanCards(plans, stateKey, selectedPlan, groupId) {
+  return plans.map((p, i) => {
+    const val = groupId ? `${groupId}_${i}` : `${i}`;
+    const sel = selectedPlan === val;
+    return `<div class="plan-card ${sel?'selected':''}" data-plan="${val}" data-key="${stateKey}">
+      <div class="price">￥${p.price}<span>/月</span></div>
+      <div class="specs">流量：${p.data} | 通话：${p.talk}</div>
+      ${p.devices?`<div class="devices">${p.devices}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function renderAddonPlanCards(plans, stateKey, selectedPlan, groupId) {
+  const originPrice = parseOriginPlanPrice(state.bbOriginPlan);
+  return plans.map((p, i) => {
+    const val = groupId ? `${groupId}_${i}` : `${i}`;
+    const sel = selectedPlan === val;
+    const total = originPrice > 0 ? originPrice + p.addon : null;
+    return `<div class="plan-card ${sel?'selected':''}" data-plan="${val}" data-key="${stateKey}">
+      <div class="price" style="font-size:16px;color:#1a1a1a;">${originPrice > 0 ? originPrice : '原手机套餐'} + ￥${p.addon}/月${total !== null ? ` = ￥${total}/月 <span style="font-weight:400;font-size:13px;color:#888;">（${originPrice}元 + ${p.addon}元）</span>` : ` <span style="font-weight:400;font-size:13px;color:#888;">（请先填写原手机套餐金额）</span>`}</div>
+      ${p.devices?`<div class="devices">${p.devices}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// --- 携号转网 ---
+function renderPortinForm() {
+  return `
+    <div class="section-title">🔄 办理携号转网</div>
+    <div class="section-desc">请填写以下信息，工作人员将协助您完成转网</div>
+    ${state.isOnsite ? `
+    <div class="form-row">
+      <div class="form-group"><label>小区名称</label><input id="f_piCommunity" placeholder="小区名称" value="${esc(state.piCommunity)}"></div>
+      <div class="form-group"><label>楼号</label><input id="f_piBuilding" placeholder="楼号/门牌号" value="${esc(state.piBuilding)}"></div>
+    </div>
+    <div class="form-group"><label>需要转网几张卡</label>
+      <select id="f_piCardCount">
+        <option value="1" ${state.piCardCount==='1'?'selected':''}>1张（主卡）</option>
+        <option value="2" ${state.piCardCount==='2'?'selected':''}>2张（主卡+1副卡）</option>
+        <option value="3" ${state.piCardCount==='3'?'selected':''}>3张（主卡+2副卡）</option>
+      </select>
+    </div>` : `<div class="info-box">请携带本人身份证原件前往就近营业厅办理携号转网。</div>`}
+    <div class="form-group"><label>您目前是哪个运营商用户？</label>
+      <div class="radio-group">
+        <label class="radio-item"><input type="radio" name="piOperator" value="telecom" ${state.piOperator==='telecom'?'checked':''}> 电信用户</label>
+        <label class="radio-item"><input type="radio" name="piOperator" value="unicom" ${state.piOperator==='unicom'?'checked':''}> 联通用户</label>
+      </div>
+    </div>
+    <div id="piContractSection" class="${!state.piOperator?'hidden':''}">
+      <div class="form-group"><label>您的原宽带合约套餐是否到期？</label>
+        <div class="radio-group">
+          <label class="radio-item"><input type="radio" name="piContractExpired" value="yes" ${state.piContractExpired===true?'checked':''}> 是（已到期）</label>
+          <label class="radio-item"><input type="radio" name="piContractExpired" value="no" ${state.piContractExpired===false?'checked':''}> 否（未到期）</label>
+        </div>
+      </div>
+      <div id="piExpiredYes" class="${state.piContractExpired===true?'':'hidden'}">
+        <div class="info-box">
+          <b>温馨提示：</b><br>
+          1. 转网前请注销原运营商宽带：电信拨打10000，联通拨打10010<br>
+          2. 查询携转资格：发送<b>"SQXZ#姓名#身份证号"</b>至10001或10010，收到6位授权码即有携转资格<br>
+          3. 转网前请解绑主卡与副卡关系：电信拨打10000，联通拨打10010
+        </div>
+        ${state.isOnsite ? `
+        <div class="form-row">
+          <div class="form-group"><label>主卡号码</label><input id="f_piMainNumber" placeholder="主卡号码" value="${esc(state.piMainNumber)}"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>副卡号码1（选填）</label><input id="f_piSubNumber1" placeholder="副卡号码" value="${esc(state.piSubNumber1)}"></div>
+          <div class="form-group"><label>副卡号码2（选填）</label><input id="f_piSubNumber2" placeholder="副卡号码" value="${esc(state.piSubNumber2)}"></div>
+        </div>
+        <div class="hint-box">提示：最多可携转2张副卡（加主卡，总共3张卡）</div>` : ''}
+        <div class="section-title" style="font-size:15px;">选择适合您的套餐</div>
+        ${renderNewBBPlanGroups('piPlan')}
+      </div>
+      <div id="piExpiredNo" class="${state.piContractExpired===false?'':'hidden'}">
+        <div class="form-group"><label>原运营商宽带合约套餐到期时间</label>
+          <div class="form-row">
+            <input id="f_piExpireYear" placeholder="年（如：2026）" value="${state.piContractExpireDate?state.piContractExpireDate.split('-')[0]:''}" style="width:100%">
+            <input id="f_piExpireMonth" placeholder="月（如：12）" value="${state.piContractExpireDate?state.piContractExpireDate.split('-')[1]:''}" style="width:100%">
+          </div>
+        </div>
+        <div class="warn-box">
+          <b>温馨提示：</b><br>
+          需等待您原运营商的宽带套餐合约到期，到期前1个月联系移动业务员登记转网。<br>
+          转网前请注销原运营商宽带：电信拨打10000，联通拨打10010<br>
+          查询携转资格：发送<b>"SQXZ#姓名#身份证号"</b>至10001或10010<br>
+          解绑主副卡关系：电信拨打10000，联通拨打10010
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// --- 增加流量 ---
+function renderDataForm() {
+  return `
+    <div class="section-title">📶 办理增加流量</div>
+    <div class="section-desc">回复短信即可办理，无需到营业厅</div>
+    <div class="info-box">增加流量只需回复短信即可办理，不需到营业厅办理。请填写以下信息，工作人员将为您处理。</div>
+    <div class="form-group"><label>手机号码</label><input id="f_daPhone" placeholder="请输入手机号码" value="${esc(state.daPhone)}"></div>
+    <div class="form-group"><label>身份证号码</label><input id="f_daIdCard" placeholder="请输入身份证号码" value="${esc(state.daIdCard)}"></div>
+  `;
+}
+
+// ==================== Step 2 事件绑定 ====================
+function bindStep2Events(c) {
+  c.querySelectorAll('input[name="bbType"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.bbType = r.value;
+      c.querySelector('#bbNewSection').classList.toggle('hidden', r.value !== 'new');
+      c.querySelector('#bbAddonSection').classList.toggle('hidden', r.value !== 'addon');
+    });
+  });
+  c.querySelectorAll('input[name="bbIsLocal"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.bbIsLocal = r.value === 'yes';
+      c.querySelector('#bbLocalYes').classList.toggle('hidden', r.value !== 'yes');
+      c.querySelector('#bbLocalNo').classList.toggle('hidden', r.value === 'yes');
+      if (r.value === 'no') state.bbMinFeeOk = null;
+    });
+  });
+  c.querySelectorAll('input[name="bbMinFeeOk"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.bbMinFeeOk = r.value === 'yes';
+      c.querySelector('#bbMinFeeYes').classList.toggle('hidden', r.value !== 'yes');
+      c.querySelector('#bbMinFeeNo').classList.toggle('hidden', r.value === 'yes');
+    });
+  });
+  c.querySelectorAll('input[name="piOperator"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.piOperator = r.value;
+      c.querySelector('#piContractSection').classList.remove('hidden');
+    });
+  });
+  c.querySelectorAll('input[name="piContractExpired"]').forEach(r => {
+    r.addEventListener('change', () => {
+      state.piContractExpired = r.value === 'yes';
+      c.querySelector('#piExpiredYes').classList.toggle('hidden', r.value !== 'yes');
+      c.querySelector('#piExpiredNo').classList.toggle('hidden', r.value === 'yes');
+    });
+  });
+  // 原套餐输入实时刷新加装套餐卡片
+  const originInput = c.querySelector('#f_bbOriginPlan');
+  const preview = c.querySelector('#originPricePreview');
+  if (originInput) {
+    const refreshAddonCards = () => {
+      // 同步 state，确保 renderAddonPlanCards 读到最新值
+      state.bbOriginPlan = originInput.value;
+      const price = parseOriginPlanPrice(originInput.value);
+      if (preview) preview.textContent = price > 0 ? `识别金额：￥${price}/月` : '';
+      // 刷新全部加装套餐卡片
+      const addonGroups = c.querySelectorAll('[id^="bbAddon"][id$="List"]');
+      addonGroups.forEach(list => {
+        const groupId = list.id.replace('List','');
+        const plansData = { bbAddon500: BB_500M_ADDON, bbAddonFttr: BB_FTTR_ADDON, bbAddonF3: BB_F3_ADDON }[groupId];
+        if (plansData) {
+          list.innerHTML = renderAddonPlanCards(plansData, 'bbPlan', state.bbPlan, groupId);
+          list.querySelectorAll('.plan-card').forEach(card => {
+            card.addEventListener('click', () => {
+              list.querySelectorAll('.plan-card').forEach(x => x.classList.remove('selected'));
+              card.classList.add('selected');
+              state.bbPlan = card.dataset.plan;
+            });
+          });
+        }
+      });
+    };
+    originInput.addEventListener('input', refreshAddonCards);
+    // 如果已有值，初始化刷新
+    if (state.bbOriginPlan) refreshAddonCards();
+  }
+  // 套餐卡片点击
+  c.querySelectorAll('.plan-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.dataset.key;
+      const plan = card.dataset.plan;
+      c.querySelectorAll(`.plan-card[data-key="${key}"]`).forEach(x => x.classList.remove('selected'));
+      card.classList.add('selected');
+      if (key === 'phonePlan') state.phonePlan = plan;
+      else if (key === 'bbPlan') state.bbPlan = plan;
+      else if (key === 'piPlan') state.piPlan = plan;
+    });
+  });
+}
+
+// ==================== 保存数据 ====================
+function saveStep2Data() {
+  if (state.bizType === 'phone') {
+    state.phoneCommunity = document.getElementById('f_phoneCommunity')?.value || '';
+    state.phoneBuilding = document.getElementById('f_phoneBuilding')?.value || '';
+    state.phoneCardCount = document.getElementById('f_phoneCardCount')?.value || '1';
+  } else if (state.bizType === 'broadband') {
+    if (state.isOnsite) {
+      state.bbCommunity = document.getElementById('f_bbCommunity')?.value || '';
+      state.bbBuilding = document.getElementById('f_bbBuilding')?.value || '';
+    }
+    const bbTypeEl = document.querySelector('input[name="bbType"]:checked');
+    if (bbTypeEl) state.bbType = bbTypeEl.value;
+    if (state.bbType === 'addon') {
+      const localEl = document.querySelector('input[name="bbIsLocal"]:checked');
+      if (localEl) state.bbIsLocal = localEl.value === 'yes';
+      state.bbAddonNumber = document.getElementById('f_bbAddonNumber')?.value || '';
+      const feeEl = document.querySelector('input[name="bbMinFeeOk"]:checked');
+      if (feeEl) state.bbMinFeeOk = feeEl.value === 'yes';
+      state.bbOriginPlan = document.getElementById('f_bbOriginPlan')?.value || '';
+    }
+  } else if (state.bizType === 'portin') {
+    if (state.isOnsite) {
+      state.piCommunity = document.getElementById('f_piCommunity')?.value || '';
+      state.piBuilding = document.getElementById('f_piBuilding')?.value || '';
+      state.piCardCount = document.getElementById('f_piCardCount')?.value || '1';
+    }
+    const opEl = document.querySelector('input[name="piOperator"]:checked');
+    if (opEl) state.piOperator = opEl.value;
+    const expEl = document.querySelector('input[name="piContractExpired"]:checked');
+    if (expEl) state.piContractExpired = expEl.value === 'yes';
+    if (state.piContractExpired === false) {
+      const y = document.getElementById('f_piExpireYear')?.value || '';
+      const m = document.getElementById('f_piExpireMonth')?.value || '';
+      state.piContractExpireDate = y && m ? `${y}-${m}` : '';
+    }
+    state.piMainNumber = document.getElementById('f_piMainNumber')?.value || '';
+    state.piSubNumber1 = document.getElementById('f_piSubNumber1')?.value || '';
+    state.piSubNumber2 = document.getElementById('f_piSubNumber2')?.value || '';
+  } else if (state.bizType === 'data') {
+    state.daPhone = document.getElementById('f_daPhone')?.value || '';
+    state.daIdCard = document.getElementById('f_daIdCard')?.value || '';
+  }
+}
+
+// ==================== 校验 ====================
+function validateAndNext() {
+  saveStep2Data();
+  if (state.bizType === 'phone' && !state.phonePlan) { alert('请选择一个手机套餐'); return; }
+  if (state.bizType === 'broadband') {
+    if (!state.bbType) { alert('请选择宽带类型'); return; }
+    if (state.bbType === 'addon') {
+      if (state.bbIsLocal === null) { alert('请选择号码归属地'); return; }
+      if (state.bbIsLocal === false) { alert('非咸阳归属地，无法办理宽带'); return; }
+      if (state.bbMinFeeOk === null) { alert('请确认每月最低资费是否大于39元'); return; }
+      if (state.bbMinFeeOk === false) { alert('您的号码办理不了宽带，请选择办理新宽带'); return; }
+    }
+    if (!state.bbPlan) { alert('请选择宽带套餐'); return; }
+  }
+  if (state.bizType === 'portin') {
+    if (!state.piOperator) { alert('请选择原运营商'); return; }
+    if (state.piContractExpired === null) { alert('请选择合约是否到期'); return; }
+    if (state.piContractExpired === true && !state.piPlan) { alert('请选择套餐'); return; }
+  }
+  if (state.bizType === 'data') {
+    if (!state.daPhone) { alert('请填写手机号码'); return; }
+    if (!state.daIdCard) { alert('请填写身份证号码'); return; }
+  }
+  state.step = 3;
+  render();
+}
+
+// ==================== Step 3: 汇总卡片浮层 ====================
+function renderStep3(c, b) {
+  c.innerHTML = `
+    <div class="section-title">✅ 信息填写完成</div>
+    <div class="section-desc">点击下方按钮查看业务办理汇总卡片</div>
+    <div style="text-align:center;padding:40px 0;">
+      <div style="font-size:64px;margin-bottom:16px;">📋</div>
+      <button class="btn btn-submit" onclick="showSummaryOverlay()" style="font-size:16px;padding:14px 40px;">
+        📋 查看业务办理汇总卡片
+      </button>
+    </div>
+  `;
+  b.innerHTML = `<button class="btn btn-back" onclick="state.step=2;render()">← 返回修改</button>`;
+  showSummaryOverlay();
+}
+
+function showSummaryOverlay() {
+  document.getElementById('summaryBody').innerHTML = buildSummaryRows();
+  document.getElementById('summaryOverlay').classList.add('show');
+}
+
+function closeSummary() {
+  document.getElementById('summaryOverlay').classList.remove('show');
+}
+
+function buildSummaryRows() {
+  let rows = [];
+  const bizLabels = { phone:'办理新手机卡', broadband:'办理宽带', portin:'办理携号转网', data:'办理增加流量' };
+  rows.push(`<div class="summary-row"><span class="label">业务类型</span><span class="value">${bizLabels[state.bizType]}</span></div>`);
+  if (state.bizType !== 'data') {
+    rows.push(`<div class="summary-row"><span class="label">是否上门</span><span class="value">${state.isOnsite?'是（上门办理）':'否（自行前往）'}</span></div>`);
+  }
+
+  if (state.bizType === 'phone') {
+    rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.phoneCommunity||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.phoneBuilding||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">办卡数量</span><span class="value">${state.phoneCardCount}张</span></div>`);
+    const p = PHONE_PLANS[parseInt(state.phonePlan)];
+    if (p) rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${p.desc}</span></div>`);
+  }
+
+  if (state.bizType === 'broadband') {
+    if (state.isOnsite) {
+      rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.bbCommunity||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.bbBuilding||'未填写'}</span></div>`);
+    }
+    rows.push(`<div class="summary-row"><span class="label">宽带类型</span><span class="value">${state.bbType==='new'?'办理新宽带':'老号码加装宽带'}</span></div>`);
+    if (state.bbType === 'addon') {
+      rows.push(`<div class="summary-row"><span class="label">号码归属</span><span class="value">${state.bbIsLocal?'咸阳归属地':'非咸阳归属地（无法办理）'}</span></div>`);
+      if (state.bbIsLocal) {
+        rows.push(`<div class="summary-row"><span class="label">号码</span><span class="value">${state.bbAddonNumber||'未填写'}</span></div>`);
+        rows.push(`<div class="summary-row"><span class="label">月最低资费≥39</span><span class="value">${state.bbMinFeeOk?'是':'否（无法办理）'}</span></div>`);
+        if (state.bbMinFeeOk && state.bbOriginPlan) {
+          const originPrice = parseOriginPlanPrice(state.bbOriginPlan);
+          rows.push(`<div class="summary-row"><span class="label">原手机套餐</span><span class="value">${state.bbOriginPlan}${originPrice>0?'（￥'+originPrice+'/月）':''}</span></div>`);
+        }
+      }
+    }
+    const planInfo = getSelectedPlanInfo(state.bbPlan);
+    if (planInfo) {
+      rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${planInfo.name||''}</span></div>`);
+      if (planInfo.price) {
+        rows.push(`<div class="plan-detail">月租：￥${planInfo.price}/月 | 流量：${planInfo.data||'—'} | 通话：${planInfo.talk||'—'} | ${planInfo.devices||''}</div>`);
+      } else if (planInfo.addon !== undefined) {
+        const originPrice = parseOriginPlanPrice(state.bbOriginPlan);
+        const total = originPrice > 0 ? ` = ￥${originPrice + planInfo.addon}/月` : '';
+        rows.push(`<div class="plan-detail">${originPrice>0?originPrice:'原手机套餐'} + ￥${planInfo.addon}/月${total} | ${planInfo.devices||''}</div>`);
+      }
+    }
+  }
+
+  if (state.bizType === 'portin') {
+    if (state.isOnsite) {
+      rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.piCommunity||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.piBuilding||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">转网卡数</span><span class="value">${state.piCardCount}张</span></div>`);
+    }
+    rows.push(`<div class="summary-row"><span class="label">原运营商</span><span class="value">${state.piOperator==='telecom'?'电信':'联通'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">合约状态</span><span class="value">${state.piContractExpired?'已到期':'未到期'}</span></div>`);
+    if (!state.piContractExpired) {
+      rows.push(`<div class="summary-row"><span class="label">合约到期时间</span><span class="value">${state.piContractExpireDate||'未填写'}</span></div>`);
+    }
+    if (state.piContractExpired && state.isOnsite) {
+      rows.push(`<div class="summary-row"><span class="label">主卡号码</span><span class="value">${state.piMainNumber||'未填写'}</span></div>`);
+      if (state.piSubNumber1) rows.push(`<div class="summary-row"><span class="label">副卡号码1</span><span class="value">${state.piSubNumber1}</span></div>`);
+      if (state.piSubNumber2) rows.push(`<div class="summary-row"><span class="label">副卡号码2</span><span class="value">${state.piSubNumber2}</span></div>`);
+    }
+    if (state.piContractExpired) {
+      const planInfo = getSelectedPlanInfo(state.piPlan);
+      if (planInfo) {
+        rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${planInfo.name||''}</span></div>`);
+        rows.push(`<div class="plan-detail">月租：￥${planInfo.price}/月 | 流量：${planInfo.data||'—'} | 通话：${planInfo.talk||'—'} | ${planInfo.devices||''}</div>`);
+      }
+    }
+  }
+
+  if (state.bizType === 'data') {
+    rows.push(`<div class="summary-row"><span class="label">手机号码</span><span class="value">${state.daPhone||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">身份证号</span><span class="value">${state.daIdCard||'未填写'}</span></div>`);
+  }
+  return rows.join('');
+}
+
+function getSelectedPlanInfo(planVal) {
+  if (!planVal) return null;
+  const [groupId, idx] = planVal.split('_');
+  const allPlans = {
+    bb500: BB_500M_NEW, bbFttr: BB_FTTR_NEW, bbF3: BB_F3_NEW,
+    bbAddon500: BB_500M_ADDON, bbAddonFttr: BB_FTTR_ADDON, bbAddonF3: BB_F3_ADDON,
+  };
+  const plans = allPlans[groupId];
+  if (plans) return plans[parseInt(idx)];
+  return null;
+}
+
+function confirmSubmit() {
+  closeSummary();
+  alert('业务办理信息已提交！\n\n工作人员将尽快与您联系，请保持电话畅通。\n\n如有疑问请拨打10086咨询。');
+  state = initState();
+  render();
+}
+
+// ==================== 导航 ====================
+function nextStep() {
+  if (!state.bizType) { alert('请选择业务类型'); return; }
+  if (state.isOnsite === null && state.bizType !== 'data') { alert('请选择是否上门办理'); return; }
+  state.step = 2;
+  render();
+}
+
+function togglePlanGroup(el) {
+  el.classList.toggle('collapsed');
+  const list = document.getElementById(el.dataset.group + 'List');
+  if (list) list.classList.toggle('collapsed');
+}
+
+render();
+</script>
+</body>
+</html>
