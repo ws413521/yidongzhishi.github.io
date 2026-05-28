@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>中国移动业务办理助手</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --red: #c62828; --red-light: #e53935; --red-dark: #8b0000;
+  --red-glass: rgba(198,40,40,0.08); --red-glass-hover: rgba(198,40,40,0.14);
+  --white: #fff; --white-glass: rgba(255,255,255,0.72);
+  --bg-warm: #faf8f6; --text: #1a1a1a; --text-secondary: #777;
+  --radius-xl: 20px; --radius-lg: 14px; --radius-md: 10px; --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04); --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.08); --shadow-xl: 0 16px 48px rgba(0,0,0,0.12);
+  --shadow-red: 0 4px 20px rgba(198,40,40,0.1);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(165deg, #fdfcfb 0%, #faf7f5 25%, #f8f2f1 50%, #fdf9f8 75%, #faf6f3 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex; justify-content: center; align-items: flex-start; padding: 24px 16px 40px;
+  position: relative; overflow-x: hidden;
+}
+/* 几何暗纹背景 */
+body::before {
+  content: ''; position: fixed; top:0; left:0; right:0; bottom:0; pointer-events: none; z-index:0;
+  background-image:
+    radial-gradient(ellipse at 15% 10%, rgba(198,40,40,0.03) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgba(198,40,40,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(180,30,30,0.02) 0%, transparent 70%);
+  opacity: 0.8;
+}
+/* 几何线条暗纹 */
+body::after {
+  content: ''; position: fixed; top:0; left:0; right:0; bottom:0; pointer-events: none; z-index:0;
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(198,40,40,0.012) 2px, rgba(198,40,40,0.012) 4px),
+    repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(198,40,40,0.008) 1px, rgba(198,40,40,0.008) 3px);
+  opacity: 0.6;
+}
+
+.container {
+  position: relative; z-index:1;
+  background: var(--white-glass);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255,255,255,0.6) inset;
+  width: 100%; max-width: 740px;
+  overflow: visible;
+  margin-top: 4px;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* 顶部导航栏 */
+.header {
+  background: #c62828;
+  padding: 18px 36px 14px; text-align: center;
+  border-radius: 40px; margin: 16px 20px 0;
+  position: relative;
+}
+.header h1 {
+  font-size: 21px; font-weight: 700; letter-spacing: 0.5px;
+  color: #fff;
+}
+.header .sub {
+  font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 3px; letter-spacing: 0.8px; font-weight: 600;
+}
+
+/* 步骤条 */
+.steps {
+  display: flex; gap: 6px; padding: 14px 28px;
+  background: rgba(255,255,255,0.4); backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.step {
+  flex:1; display:flex; align-items:center; gap:8px; padding: 8px 10px;
+  border-radius: 30px; font-size: 12px; color: #bbb; font-weight: 600;
+  background: transparent; transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+}
+.step .dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #e8e5e3; color: #999; font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  flex-shrink: 0;
+}
+.step.active { color: var(--red); background: rgba(198,40,40,0.06); }
+.step.active .dot {
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff; box-shadow: 0 2px 10px rgba(198,40,40,0.3);
+  transform: scale(1.08);
+}
+.step.done { color: var(--red); }
+.step.done .dot {
+  background: #f0d0d0; color: var(--red); font-size: 0;
+}
+.step.done .dot::after { content: '✓'; font-size: 12px; font-weight: 700; }
+
+.content { padding: 28px 32px; }
+
+/* 标题 */
+.section-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; letter-spacing: 0.2px; }
+.section-desc { font-size: 13px; color: #999; margin-bottom: 20px; font-weight: 500; }
+
+/* 毛玻璃卡片 */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+.card {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,0,0,0.04);
+  border-radius: var(--radius-lg); padding: 22px 18px;
+  cursor: pointer; transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  text-align: center; position: relative;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card::before {
+  content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(198,40,40,0.06), transparent 70%);
+  opacity: 0; transition: opacity 0.35s;
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg), var(--shadow-red); border-color: rgba(198,40,40,0.15); }
+.card:hover::before { opacity: 1; }
+.card.selected {
+  background: rgba(255,255,255,0.8); border-color: var(--red-light);
+  box-shadow: var(--shadow-red), 0 0 0 1px rgba(198,40,40,0.2) inset;
+  transform: translateY(-2px);
+}
+.card.selected::before { opacity: 1; }
+.card .icon { font-size: 34px; margin-bottom: 10px; position: relative; z-index:1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.06));
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.card.selected .icon { transform: scale(1.08); }
+.card .title { font-size: 15px; font-weight: 700; color: var(--text); position: relative; z-index:1; }
+.card .hint { font-size: 12px; color: #aaa; margin-top: 4px; position: relative; z-index:1; }
+.card .check {
+  position: absolute; top: 10px; right: 12px; z-index:2;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff; font-size: 12px; line-height: 22px; text-align: center;
+  display: none; box-shadow: 0 2px 8px rgba(198,40,40,0.3);
+}
+.card.selected .check { display: block; animation: popIn 0.3s cubic-bezier(0.16,1,0.3,1); }
+@keyframes popIn {
+  0% { transform: scale(0); opacity:0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity:1; }
+}
+
+/* 方形勾选框 */
+.cb-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+.cb-item {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;
+  padding: 8px 16px; border-radius: 24px; font-weight: 500;
+  background: rgba(255,255,255,0.5); border: 1.5px solid rgba(0,0,0,0.06);
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.cb-item:hover { border-color: rgba(198,40,40,0.2); background: rgba(255,255,255,0.7); }
+.cb-item.active {
+  border-color: var(--red-light); background: rgba(255,235,238,0.8);
+  box-shadow: 0 2px 10px rgba(198,40,40,0.1);
+  color: var(--red); font-weight: 700;
+}
+.cb-box {
+  width: 20px; height: 20px; border: 2px solid #d0d0d0; border-radius: 4px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  font-size: 12px; color: transparent; background: #fff;
+}
+.cb-item.active .cb-box {
+  border-color: var(--red); background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff;
+}
+
+/* 同行输入 */
+.inline-field {
+  display: flex; align-items: center; margin-bottom: 10px; gap: 10px;
+}
+.inline-field .if-label {
+  font-size: 14px; font-weight: 600; color: #444; white-space: nowrap;
+  min-width: fit-content;
+}
+.inline-field .if-label::after { content: "："; color: #999; }
+.inline-field input, .inline-field select {
+  flex:1; min-width: 100px; padding: 10px 14px;
+  border: 1.5px solid rgba(0,0,0,0.06); border-radius: var(--radius-sm);
+  font-size: 14px; outline: none; font-family: inherit; font-weight: 500;
+  background: rgba(255,255,255,0.7); color: var(--text);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.inline-field input:focus, .inline-field select:focus {
+  border-color: var(--red-light); background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 3px rgba(198,40,40,0.06);
+}
+
+/* 滚轮选择器 —— 毛玻璃面板 */
+.wheel-section { margin-bottom: 14px; }
+.wheel-toggle {
+  display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+  padding: 12px 16px; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 600; color: var(--text);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(0,0,0,0.04);
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  box-shadow: var(--shadow-sm);
+}
+.wheel-toggle:hover {
+  border-color: rgba(198,40,40,0.18); box-shadow: var(--shadow-md), var(--shadow-red);
+}
+.wheel-toggle .arrow { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); font-size: 11px; color: #bbb; }
+.wheel-selected-label {
+  font-size: 12px; color: var(--red); font-weight: 600; margin-top: 6px; padding-left: 4px;
+}
+.wheel-list {
+  max-height: 0; overflow-y: auto; transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04) inset;
+}
+.wheel-list.open { max-height: 300px; border: 1px solid rgba(0,0,0,0.04); border-top: none; }
+.wheel-item {
+  padding: 13px 16px; cursor: pointer; border-bottom: 1px solid rgba(0,0,0,0.03);
+  transition: all 0.2s; font-size: 13px; color: #555;
+}
+.wheel-item:last-child { border-bottom: none; }
+.wheel-item:hover { background: rgba(198,40,40,0.04); color: var(--red); }
+.wheel-item.selected {
+  background: linear-gradient(90deg, rgba(198,40,40,0.07), rgba(198,40,40,0.02));
+  color: var(--red); font-weight: 700;
+}
+
+/* 扩容面板 */
+.expand-box {
+  background: rgba(255,245,245,0.55);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(198,40,40,0.1); border-radius: var(--radius-lg);
+  padding: 16px 18px; margin-top: 14px;
+  box-shadow: 0 2px 12px rgba(198,40,40,0.04) inset;
+}
+.expand-box .ex-title {
+  font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+.expand-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.expand-opt {
+  padding: 7px 16px; border-radius: 20px; cursor: pointer;
+  font-size: 13px; font-weight: 500; transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  background: rgba(255,255,255,0.6); border: 1.5px solid rgba(0,0,0,0.05);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.expand-opt:hover { border-color: rgba(198,40,40,0.2); transform: translateY(-1px); }
+.expand-opt.active {
+  border-color: var(--red-light); background: rgba(255,235,238,0.7);
+  color: var(--red); font-weight: 700; box-shadow: var(--shadow-red);
+}
+.final-plan {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(198,40,40,0.12); border-radius: var(--radius-md);
+  padding: 13px 16px; margin-top: 12px;
+  font-size: 13px; color: var(--text); line-height: 1.6;
+  box-shadow: 0 1px 6px rgba(198,40,40,0.04) inset;
+}
+.final-plan .fp-title { font-weight: 700; color: var(--red); margin-bottom: 3px; font-size: 13px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* 消息条 */
+.hint-box {
+  background: rgba(255,248,225,0.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-left: 3px solid #ffc107; padding: 11px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px; color: #8b6914; margin-bottom: 16px;
+}
+.info-box {
+  background: rgba(255,235,238,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-left: 3px solid var(--red-light); padding: 11px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px; color: #7f1d1d; margin-bottom: 16px;
+}
+.warn-box {
+  background: rgba(255,240,240,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-left: 3px solid var(--red-dark); padding: 11px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 13px; color: #8b0000; margin-bottom: 16px;
+}
+
+/* 按钮 */
+.btns { display: flex; gap: 12px; justify-content: flex-end; padding: 0 32px 28px; flex-wrap: wrap; }
+.btn {
+  padding: 11px 28px; border-radius: 28px; font-size: 14px; font-weight: 700;
+  cursor: pointer; border: none; font-family: inherit; letter-spacing: 0.3px;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  position: relative; overflow: hidden;
+}
+.btn-back {
+  background: rgba(0,0,0,0.04); color: #666;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.btn-back:hover { background: rgba(0,0,0,0.08); transform: translateY(-1px); }
+.btn-next {
+  background: linear-gradient(135deg, #c62828, #e53935);
+  color: #fff; box-shadow: 0 4px 16px rgba(198,40,40,0.25);
+}
+.btn-next:hover { box-shadow: 0 6px 22px rgba(198,40,40,0.35); transform: translateY(-2px); }
+.btn-submit {
+  background: linear-gradient(135deg, #b71c1c, #c62828);
+  color: #fff; padding: 13px 40px; font-size: 15px;
+  box-shadow: 0 4px 20px rgba(183,28,28,0.3);
+}
+.btn-submit:hover { box-shadow: 0 6px 26px rgba(183,28,28,0.4); transform: translateY(-2px); }
+.btn-print { background: rgba(80,80,80,0.9); color: #fff; }
+.btn-print:hover { background: rgba(50,50,50,0.9); transform: translateY(-1px); }
+
+.hidden { display: none !important; }
+.footer { text-align: center; padding: 0 32px 22px; font-size: 11px; color: #ccc; letter-spacing: 0.5px; font-weight: 500; }
+
+/* 浮层 */
+.overlay {
+  display: none; position: fixed; top:0; left:0; right:0; bottom:0; z-index:1000;
+  justify-content: center; align-items: center; padding: 24px;
+  background: rgba(20,0,0,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.overlay.show { display: flex; }
+.summary-card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 0 0 1px rgba(255,255,255,0.5) inset;
+  width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+}
+.summary-card .card-header {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 20px 24px; border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.summary-card .card-header h2 {
+  font-size: 17px; font-weight: 700;
+  background: linear-gradient(135deg, #c62828, #d32f2f);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.summary-card .card-header .close-btn {
+  background: rgba(0,0,0,0.04); border: none; width: 32px; height: 32px;
+  border-radius: 50%; cursor: pointer; font-size: 16px; color: #999;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.summary-card .card-header .close-btn:hover { background: rgba(0,0,0,0.08); color: #333; }
+.summary-card .card-body { padding: 20px 24px; }
+.summary-card .card-footer { padding: 0 24px 20px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.summary-row {
+  display: flex; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.03);
+  font-size: 14px; align-items: flex-start;
+}
+.summary-row .label { color: #999; min-width: 90px; flex-shrink: 0; font-weight: 500; }
+.summary-row .value { color: var(--text); font-weight: 600; }
+.plan-detail {
+  background: rgba(255,245,245,0.5); border: 1px solid rgba(198,40,40,0.08);
+  border-radius: var(--radius-sm); padding: 11px 14px;
+  margin-top: 6px; margin-bottom: 8px; font-size: 13px; color: #5a1a1a;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
+/* ==================== 响应式 ==================== */
+@media (min-width: 1200px) {
+  .container { max-width: 800px; }
+  .content { padding: 36px 44px; }
+  .btns { padding: 0 44px 32px; }
+  .header { padding: 22px 44px 16px; margin: 20px 24px 0; }
+  .header h1 { font-size: 24px; color: #fff; }
+  .card { padding: 26px 22px; }
+  .card .icon { font-size: 38px; }
+}
+@media (min-width: 769px) and (max-width: 1199px) {
+  .container { max-width: 700px; }
+}
+@media (min-width: 481px) and (max-width: 768px) {
+  body { padding: 14px 10px 32px; }
+  .container { max-width: 100%; border-radius: var(--radius-lg); }
+  .header { padding: 16px 24px 12px; margin: 14px 18px 0; border-radius: 34px; }
+  .header h1 { font-size: 19px; color: #fff; }
+  .content { padding: 20px 22px; }
+  .btns { padding: 0 22px 22px; gap: 10px; }
+  .footer { padding: 0 22px 18px; }
+  .cards { gap: 10px; }
+  .card { padding: 18px 14px; }
+  .card .icon { font-size: 30px; }
+  .btn { padding: 10px 22px; font-size: 13px; }
+  .summary-card { max-width: 95%; }
+  .summary-card .card-footer .btn { margin-left: 0 !important; }
+}
+@media (max-width: 480px) {
+  body { padding: 0; background: #faf8f6; }
+  body::before, body::after { opacity: 0.4; }
+  .container { max-width: 100%; border-radius: 0; box-shadow: none; margin-top:0; min-height:100vh;
+    background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); }
+  .header { padding: 14px 18px 10px; margin: 10px 12px 0; border-radius: 30px; }
+  .header h1 { font-size: 21px; }
+  .header .sub { font-size: 15px; }
+  .steps { padding: 10px 16px; gap: 4px; }
+  .step { padding: 6px 8px; font-size: 10px; border-radius: 20px; }
+  .step .dot { width: 20px; height: 20px; font-size: 10px; }
+  .content { padding: 16px 14px; }
+  .btns { padding: 0 14px 16px; gap: 8px; flex-direction: column; }
+  .btn { width: 100%; text-align: center; padding: 13px 20px; font-size: 15px; border-radius: 14px; }
+  .btn-back { order: 2; }
+  .btn-next { order: 1; }
+  .btn-submit { order: 1; width: 100%; }
+  .btn-print { order: 3; width: 100%; }
+  .footer { padding: 0 14px 16px; font-size: 10px; }
+  .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { padding: 18px 10px; border-radius: var(--radius-md); display: block; text-align: center; }
+  .card .icon { font-size: 30px; margin-bottom: 6px; }
+  .card .title { font-size: 13px; }
+  .card .check { top: 8px; right: 10px; width: 20px; height: 20px; line-height: 20px; font-size: 11px; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .inline-field { flex-direction: column; align-items: stretch; gap: 4px; }
+  .inline-field .if-label { font-size: 13px; }
+  .inline-field input, .inline-field select { font-size: 16px; padding: 10px 12px; }
+  .overlay { padding: 10px; align-items: center; }
+  .summary-card { max-width: 100%; border-radius: var(--radius-xl); max-height: 85vh; }
+  .summary-card .card-header { padding: 16px 18px; }
+  .summary-card .card-header h2 { font-size: 15px; }
+  .summary-card .card-body { padding: 14px 16px; }
+  .summary-card .card-footer { padding: 0 16px 16px; flex-direction: column; }
+  .summary-card .card-footer .btn { width: 100%; margin-left: 0 !important; }
+  .summary-row { font-size: 13px; }
+  .summary-row .label { min-width: 72px; font-size: 12px; }
+}
+@media (max-width: 360px) {
+  .header h1 { font-size: 19px; }
+  .step { font-size: 9px; }
+  .content { padding: 12px 10px; }
+  .btns { padding: 0 10px 12px; }
+  .card .title { font-size: 13px; }
+  .card .icon { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+<div class="container" id="mainApp">
+  <div class="header">
+    <h1>中国移动业务办理助手</h1>
+    <div class="sub">手机流量 | 家庭宽带 | 全屋智能 | 一站式服务</div>
+  </div>
+  <div class="steps">
+    <div class="step active" data-step="1"><div class="dot">1</div>选择业务</div>
+    <div class="step" data-step="2"><div class="dot">2</div>填写信息</div>
+    <div class="step" data-step="3"><div class="dot">3</div>确认提交</div>
+  </div>
+  <div class="content" id="content"></div>
+  <div class="btns" id="buttons"></div>
+  <div class="footer">中国移动通信集团 · 业务办理助手 v5.1</div>
+</div>
+
+<div class="overlay" id="summaryOverlay">
+  <div class="summary-card">
+    <div class="card-header">
+      <h2>📋 业务办理汇总</h2>
+      <button class="close-btn" onclick="closeSummary()">✕</button>
+    </div>
+    <div class="card-body" id="summaryBody"></div>
+    <div class="card-footer">
+      <button class="btn btn-submit" onclick="confirmSubmit()">✓ 确认提交</button>
+      <button class="btn btn-print" style="margin-left:8px;" onclick="window.print()">🖨 打印</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== 数据 ====================
+const PHONE_PLANS = [
+  { id:'p1', name:'套餐一', price:39, data:100, talk:100, speed:'', desc:'套餐一 | ￥39/月 | 流量：100G | 通话：100分钟' },
+  { id:'p2', name:'套餐二', price:59, data:130, talk:200, speed:'', desc:'套餐二 | ￥59/月 | 流量：130G | 通话：200分钟' },
+];
+const BB_NEW_500M = [
+  { id:'b5_1', name:'套餐一', price:59, data:100, talk:100, speed:'500兆', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { id:'b5_2', name:'套餐二', price:69, data:100, talk:100, speed:'500兆', devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+  { id:'b5_3', name:'套餐三', price:79, data:130, talk:200, speed:'500兆', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { id:'b5_4', name:'套餐四', price:89, data:130, talk:200, speed:'500兆', devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+];
+const BB_NEW_FTTR = [
+  { id:'bf_1', name:'套餐一', price:69, data:100, talk:100, speed:'1000兆FTTR', devices:'带设备：主路由+从路由' },
+  { id:'bf_2', name:'套餐二', price:89, data:100, talk:100, speed:'1000兆FTTR', devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+  { id:'bf_3', name:'套餐三', price:89, data:130, talk:200, speed:'1000兆FTTR', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { id:'bf_4', name:'套餐四', price:109, data:130, talk:200, speed:'1000兆FTTR', devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+];
+const BB_NEW_F3 = [
+  { id:'b3_1', name:'套餐一', price:79, data:100, talk:100, speed:'1000兆F3', devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+  { id:'b3_2', name:'套餐二', price:99, data:130, talk:200, speed:'1000兆F3', devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+];
+const BB_ADDON_500M = [
+  { id:'a5_1', name:'套餐一', addon:20, data:null, talk:null, speed:'500兆', devices:'自备路由器，带设备：机顶盒、摄像头、遥控器' },
+  { id:'a5_2', name:'套餐二', addon:30, data:null, talk:null, speed:'500兆', devices:'带设备：普通路由器、机顶盒、摄像头、遥控器' },
+];
+const BB_ADDON_FTTR = [
+  { id:'af_1', name:'套餐一', addon:30, data:null, talk:null, speed:'1000兆FTTR', devices:'带设备：主路由+从路由' },
+  { id:'af_2', name:'套餐二', addon:30, data:null, talk:null, speed:'1000兆FTTR', devices:'带设备：主路由+从路由、机顶盒、摄像头、遥控器' },
+];
+const BB_ADDON_F3 = [
+  { id:'a3_1', name:'套餐一', addon:40, data:null, talk:null, speed:'1000兆F3', devices:'带设备：F3一体机+从路由、摄像头、遥控器' },
+];
+
+// 扩容包
+const DATA_BOOSTS = [
+  { label:'+1元=10G', price:1, data:10, talk:0 },
+  { label:'+5元=25G', price:5, data:25, talk:0 },
+  { label:'+10元=50G', price:10, data:50, talk:0 },
+];
+const TALK_BOOSTS = [
+  { label:'+1元=100分钟', price:1, data:0, talk:100 },
+  { label:'+5元=500分钟', price:5, data:0, talk:500 },
+];
+
+// ==================== 状态 ====================
+let state = {};
+function initState() {
+  return {
+    step:1, bizType:null, isOnsite:null,
+    // 手机卡
+    phoneCommunity:'', phoneBuilding:'', phoneCardCount:'1', phonePlan:null,
+    phoneDataBoost:null, phoneTalkBoost:null,
+    // 宽带
+    bbCommunity:'', bbBuilding:'', bbCardCount:'1', bbType:null,
+    bbIsLocal:null, bbAddonNumber:'', bbMinFeeOk:null, bbOriginPlan:'', bbPlan:null,
+    bbDataBoost:null, bbTalkBoost:null,
+    // 携转
+    piOperator:null, piCommunity:'', piBuilding:'', piCardCount:'1',
+    piContractExpired:null, piContractExpireDate:'',
+    piMainNumber:'', piSubNumber1:'', piSubNumber2:'', piPlan:null,
+    piDataBoost:null, piTalkBoost:null,
+    // 增流量
+    daPhone:'', daIdCard:'',
+  };
+}
+state = initState();
+
+// ==================== 渲染入口 ====================
+function render() {
+  updateSteps();
+  const c = document.getElementById('content');
+  const b = document.getElementById('buttons');
+  if (state.step===1) renderStep1(c,b);
+  else if (state.step===2) renderStep2(c,b);
+  else if (state.step===3) renderStep3(c,b);
+}
+
+function updateSteps() {
+  document.querySelectorAll('.step').forEach((el,i)=>{
+    el.classList.remove('active','done');
+    if (i+1<state.step) el.classList.add('done');
+    if (i+1===state.step) el.classList.add('active');
+  });
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+function nowDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日${String(d.getHours()).padStart(2,'0')}时${String(d.getMinutes()).padStart(2,'0')}分${String(d.getSeconds()).padStart(2,'0')}秒`;
+}
+
+// ==================== 方形勾选框 ====================
+function renderCbGroup(name, options, selected) {
+  return `<div class="cb-group">${options.map(o=>{
+    const sel = selected===o.value;
+    return `<div class="cb-item${sel?' active':''}" data-cb="${name}" data-val="${o.value}">
+      <div class="cb-box">${sel?'✓':''}</div><span>${o.label}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ==================== 滚轮选择器 ====================
+function renderWheel(wheelId, label, plans, selectedVal, displayFn) {
+  const selPlan = plans.find(p=>p.id===selectedVal);
+  const selText = selPlan ? (displayFn?displayFn(selPlan):selPlan.desc||selPlan.name) : '点击选择';
+  return `<div class="wheel-section" id="${wheelId}Section">
+    <div class="wheel-toggle" onclick="toggleWheel('${wheelId}')">
+      <span>${label}</span><span class="arrow">▼</span>
+    </div>
+    <div class="wheel-selected-label">${selPlan?'已选：'+selText:''}</div>
+    <div class="wheel-list" id="${wheelId}List">
+      ${plans.map(p=>`<div class="wheel-item${p.id===selectedVal?' selected':''}" data-wid="${wheelId}" data-pid="${p.id}">${displayFn?displayFn(p):(p.desc||p.name)}</div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function toggleWheel(wid) {
+  const list = document.getElementById(wid+'List');
+  if (!list) return;
+  const isOpen = list.classList.contains('open');
+  // 关闭所有
+  document.querySelectorAll('.wheel-list.open').forEach(l=>l.classList.remove('open'));
+  if (!isOpen) list.classList.add('open');
+}
+
+// ==================== Step 1 ====================
+function renderStep1(c,b) {
+  c.innerHTML = `
+    <div class="section-title">请选择您要办理的业务</div>
+    <div class="section-desc">请选择其中一项，其他不可同时选择</div>
+    <div class="cards" id="bizCards">
+      <div class="card" data-biz="phone"><div class="icon">📱</div><div class="title">办理新手机卡</div><div class="hint">月租39元起</div><div class="check">✓</div></div>
+      <div class="card" data-biz="broadband"><div class="icon">📡</div><div class="title">办理宽带</div><div class="hint">500M/1000M可选</div><div class="check">✓</div></div>
+      <div class="card" data-biz="portin"><div class="icon">🔄</div><div class="title">办理携号转网</div><div class="hint">电信/联通转移动</div><div class="check">✓</div></div>
+      <div class="card" data-biz="data"><div class="icon">📶</div><div class="title">办理增加流量</div><div class="hint">短信即可办理</div><div class="check">✓</div></div>
+    </div>
+    <div class="section-title" style="margin-top:20px;">是否上门办理？</div>
+    ${renderCbGroup('onsite',[{label:'是（上门办理）',value:'yes'},{label:'否（自行前往）',value:'no'}], state.isOnsite)}
+    <div id="onsiteNote"></div>
+  `;
+  b.innerHTML = `<button class="btn btn-next" onclick="nextStep()">下一步 →</button>`;
+
+  if (state.bizType) {
+    const card = c.querySelector(`[data-biz="${state.bizType}"]`);
+    if (card) card.classList.add('selected');
+  }
+  updateOnsiteNote();
+
+  c.querySelectorAll('#bizCards .card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      c.querySelectorAll('#bizCards .card').forEach(x=>x.classList.remove('selected'));
+      card.classList.add('selected');
+      state.bizType = card.dataset.biz;
+      if (state.bizType==='data') { state.isOnsite='no'; renderStep1(c,b); }
+      updateOnsiteNote();
+    });
+  });
+
+  c.querySelectorAll('.cb-item[data-cb="onsite"]').forEach(item=>{
+    item.addEventListener('click',()=>{
+      state.isOnsite = item.dataset.val;
+      c.querySelectorAll('.cb-item[data-cb="onsite"]').forEach(x=>x.classList.remove('active'));
+      item.classList.add('active');
+      c.querySelectorAll('.cb-item[data-cb="onsite"] .cb-box').forEach(box=>box.textContent='');
+      item.querySelector('.cb-box').textContent='✓';
+      updateOnsiteNote();
+    });
+  });
+
+  function updateOnsiteNote() {
+    const note = document.getElementById('onsiteNote');
+    if (state.isOnsite==='yes') note.innerHTML = '<div class="info-box">工作人员将携带设备上门为您办理，请准备好本人身份证原件。</div>';
+    else if (state.isOnsite==='no') {
+      if (state.bizType==='data') note.innerHTML = '<div class="info-box">请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>';
+      else note.innerHTML = '<div class="info-box">请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>';
+    } else note.innerHTML = '';
+  }
+}
+
+// ==================== Step 2 ====================
+function renderStep2(c,b) {
+  if (!state.bizType) { alert('请先选择业务类型'); state.step=1; render(); return; }
+  if (state.isOnsite===null && state.bizType!=='data') { alert('请选择是否上门办理'); state.step=1; render(); return; }
+
+  let html = '';
+  if (state.bizType==='phone') html = renderPhone();
+  else if (state.bizType==='broadband') html = renderBB();
+  else if (state.bizType==='portin') html = renderPortin();
+  else if (state.bizType==='data') html = renderData();
+
+  c.innerHTML = html;
+  b.innerHTML = `<button class="btn btn-back" onclick="state.step=1;render()">← 返回</button><button class="btn btn-next" onclick="validateAndNext()">下一步 →</button>`;
+  bindStep2(c);
+}
+
+// --- 新手机卡 ---
+function renderPhone() {
+  let h = `<div class="section-title">📱 办理新手机卡</div><div class="section-desc">请填写以下信息</div>`;
+  h += state.isOnsite==='yes'
+    ? `<div class="hint-box">提示：最多可办理2张副卡，加主卡共3张。需携带本人身份证原件。</div>`
+    : `<div class="info-box">温馨提示：请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>`;
+  h += `
+    <div class="inline-field"><span class="if-label">小区名称</span><input id="f_phoneCommunity" placeholder="小区名称" value="${esc(state.phoneCommunity)}"></div>
+    <div class="inline-field"><span class="if-label">楼号</span><input id="f_phoneBuilding" placeholder="楼号/门牌号" value="${esc(state.phoneBuilding)}"></div>
+    <div class="inline-field"><span class="if-label">需要几张卡</span>
+      <select id="f_phoneCardCount">${['1','2','3'].map(v=>`<option value="${v}" ${state.phoneCardCount===v?'selected':''}>${v}张${v==='1'?'（主卡）':v==='2'?'（主卡+1副卡）':'（主卡+2副卡）'}</option>`).join('')}</select>
+    </div>
+    <div class="section-title" style="margin-top:16px;font-size:15px;">手机新卡套餐</div>
+    ${renderWheel('phonePlanWheel','选择套餐',PHONE_PLANS,state.phonePlan,p=>`${p.name} | ￥${p.price}/月 | 流量：${p.data}G | 通话：${p.talk}分钟`)}
+    <div id="phonePlanDetail"></div>
+  `;
+  return h;
+}
+
+function renderPhonePlanDetail(plan) {
+  if (!plan) return '';
+  const baseData = plan.data + (state.phoneDataBoost||0);
+  const baseTalk = plan.talk + (state.phoneTalkBoost||0);
+  const finalPrice = plan.price + (state.phoneDataBoostPrice||0) + (state.phoneTalkBoostPrice||0);
+  let h = `<div class="expand-box">
+    <div class="ex-title">您选择的手机基础套餐是：</div>
+    <div class="final-plan" style="font-weight:700;">${plan.name} | ￥${plan.price}/月 | 流量：${plan.data}G | 通话：${plan.talk}分钟</div>
+    <div class="ex-title" style="margin-top:12px;">是否增加流量与通话扩容？</div>
+    ${renderCbGroup('phoneBoost',[{label:'是',value:'yes'},{label:'否',value:'no'}], (state.phoneDataBoost!==null||state.phoneTalkBoost!==null)?'yes':'no')}
+    <div id="phoneBoostContent">`;
+  if ((state.phoneDataBoost!==null||state.phoneTalkBoost!==null)) {
+    h += renderBoostContent('phone');
+  }
+  h += `</div>`;
+  if (state.phoneDataBoost!==null||state.phoneTalkBoost!==null) {
+    h += `<div class="final-plan" style="margin-top:10px;"><div class="fp-title">最终手机基础套餐</div>
+      ${plan.name} | ￥${finalPrice}/月 | 流量：${baseData}G | 通话：${baseTalk}分钟</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+// --- 宽带 ---
+function renderBB() {
+  let h = `<div class="section-title">📡 办理宽带</div><div class="section-desc">请填写以下信息</div>`;
+  if (state.isOnsite==='yes') {
+    h += `
+    <div class="inline-field"><span class="if-label">小区名称</span><input id="f_bbCommunity" placeholder="小区名称" value="${esc(state.bbCommunity)}"></div>
+    <div class="inline-field"><span class="if-label">楼号</span><input id="f_bbBuilding" placeholder="楼号/门牌号" value="${esc(state.bbBuilding)}"></div>`;
+  } else {
+    h += `<div class="info-box">温馨提示：请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>`;
+  }
+  h += `
+    <div class="section-title" style="font-size:15px;">宽带类型</div>
+    ${renderCbGroup('bbType',[{label:'办理新宽带',value:'new'},{label:'老号码加装宽带',value:'addon'}], state.bbType)}
+    <div id="bbNewSection" class="${state.bbType!=='new'?'hidden':''}">
+      ${state.isOnsite==='yes' ? `<div class="inline-field"><span class="if-label">需要几张卡</span>
+        <select id="f_bbCardCount">${['1','2','3'].map(v=>`<option value="${v}" ${state.bbCardCount===v?'selected':''}>${v}张</option>`).join('')}</select>
+      </div>` : ''}
+      <div class="section-title" style="font-size:15px;">新装宽带套餐</div>
+      ${renderBBWheels('bbPlan','bb')}
+      <div id="bbPlanDetail"></div>
+    </div>
+    <div id="bbAddonSection" class="${state.bbType!=='addon'?'hidden':''}">
+      <div class="section-title" style="font-size:15px;">老号码加装宽带</div>
+      ${renderCbGroup('bbIsLocal',[{label:'是（咸阳归属地）',value:'yes'},{label:'否（非咸阳归属地）',value:'no'}], state.bbIsLocal===true?'yes':state.bbIsLocal===false?'no':null)}
+      <div id="bbLocalNo" class="${state.bbIsLocal===false?'':'hidden'}"><div class="warn-box">非咸阳归属地，您的号码办理不了宽带，请先办理一张咸阳归属地手机卡后，方可办理宽带。</div></div>
+      <div id="bbLocalYes" class="${state.bbIsLocal===true?'':'hidden'}">
+        <div class="inline-field"><span class="if-label">您的号码</span><input id="f_bbAddonNumber" placeholder="请输入手机号码" value="${esc(state.bbAddonNumber)}"></div>
+        ${renderCbGroup('bbMinFeeOk',[{label:'是（≥39元）',value:'yes'},{label:'否（<39元）',value:'no'}], state.bbMinFeeOk===true?'yes':state.bbMinFeeOk===false?'no':null)}
+        <div id="bbMinFeeNo" class="${state.bbMinFeeOk===false?'':'hidden'}"><div class="warn-box">您的号码办理不了宽带，请选择办理新宽带。</div></div>
+        <div id="bbMinFeeYes" class="${state.bbMinFeeOk===true?'':'hidden'}">
+          <div class="inline-field"><span class="if-label">原手机套餐</span><input id="f_bbOriginPlan" placeholder="如：39元套餐" value="${esc(state.bbOriginPlan)}"></div>
+          ${renderAddonBBWheels('bbPlan','bb')}
+          <div id="bbAddonPlanDetail"></div>
+        </div>
+      </div>
+    </div>
+  `;
+  return h;
+}
+
+function renderBBWheels(planKey, prefix) {
+  return `
+    ${renderWheel(prefix+'500Wheel','500M普通宽带家庭套餐（点击展开）',BB_NEW_500M, state.bbPlan, p=>`${p.name} | ${p.speed}宽带 | ￥${p.price}/月 | 流量：${p.data}G | 通话：${p.talk}分钟 | ${p.devices}`)}
+    ${renderWheel(prefix+'FttrWheel','1000M+FTTR全屋光网套餐（点击展开）',BB_NEW_FTTR, state.bbPlan, p=>`${p.name} | ${p.speed}宽带 | ￥${p.price}/月 | 流量：${p.data}G | 通话：${p.talk}分钟 | ${p.devices}`)}
+    ${renderWheel(prefix+'F3Wheel','1000M+F3一体机全屋光网套餐（点击展开）',BB_NEW_F3, state.bbPlan, p=>`${p.name} | ${p.speed}宽带 | ￥${p.price}/月 | 流量：${p.data}G | 通话：${p.talk}分钟 | ${p.devices}`)}
+  `;
+}
+
+function renderAddonBBWheels(planKey, prefix) {
+  return `
+    ${renderWheel(prefix+'A500Wheel','500M普通宽带家庭套餐（点击展开）',BB_ADDON_500M, state.bbPlan, p=>`${p.name} | ${p.speed} | 原套餐+￥${p.addon}/月 | ${p.devices}`)}
+    ${renderWheel(prefix+'AFttrWheel','1000M+FTTR全屋光网套餐（点击展开）',BB_ADDON_FTTR, state.bbPlan, p=>`${p.name} | ${p.speed} | 原套餐+￥${p.addon}/月 | ${p.devices}`)}
+    ${renderWheel(prefix+'AF3Wheel','1000M+F3一体机全屋光网套餐（点击展开）',BB_ADDON_F3, state.bbPlan, p=>`${p.name} | ${p.speed} | 原套餐+￥${p.addon}/月 | ${p.devices}`)}
+  `;
+}
+
+function renderBBPlanDetail(plan, prefix) {
+  if (!plan) return '';
+  if (!plan.price) return renderAddonPlanDetail(plan, prefix);
+  const baseData = plan.data + (state.bbDataBoost||0);
+  const baseTalk = plan.talk + (state.bbTalkBoost||0);
+  const finalPrice = plan.price + (state.bbDataBoostPrice||0) + (state.bbTalkBoostPrice||0);
+  let h = `<div class="expand-box">
+    <div class="ex-title">您选择的宽带套餐是：</div>
+    <div class="final-plan" style="font-weight:700;">${plan.name} | ${plan.speed}宽带 | ￥${plan.price}/月 | 流量：${plan.data}G | 通话：${plan.talk}分钟</div>
+    <div class="ex-title" style="margin-top:12px;">是否增加流量与通话扩容？</div>
+    ${renderCbGroup(prefix+'Boost',[{label:'是',value:'yes'},{label:'否',value:'no'}], (state.bbDataBoost!==null||state.bbTalkBoost!==null)?'yes':'no')}
+    <div id="${prefix}BoostContent">${(state.bbDataBoost!==null||state.bbTalkBoost!==null)?renderBoostContent('bb'):''}</div>`;
+  if (state.bbDataBoost!==null||state.bbTalkBoost!==null) {
+    h += `<div class="final-plan" style="margin-top:10px;font-weight:700;"><div class="fp-title">最终宽带套餐</div>
+      ${plan.name} | ${plan.speed}宽带 | ￥${finalPrice}/月 | 流量：${baseData}G | 通话：${baseTalk}分钟</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+function renderAddonPlanDetail(plan, prefix) {
+  if (!plan) return '';
+  const originPrice = parseOriginPlanPrice(state.bbOriginPlan);
+  const total = originPrice>0 ? originPrice+plan.addon : null;
+  let h = `<div class="expand-box">
+    <div class="ex-title">您选择的老号加装宽带套餐是：</div>
+    <div class="final-plan" style="font-weight:700;">${plan.name} | ${plan.speed} | ${originPrice>0?originPrice:'原套餐'}+￥${plan.addon}/月${total?' = ￥'+total+'/月':''} | ${plan.devices}</div>
+  </div>`;
+  return h;
+}
+
+// --- 携号转网 ---
+function renderPortin() {
+  let h = `<div class="section-title">🔄 办理携号转网</div><div class="section-desc">请填写以下信息，工作人员将协助您完成转网</div>`;
+  if (state.isOnsite==='yes') {
+    h += `
+    <div class="inline-field"><span class="if-label">小区名称</span><input id="f_piCommunity" placeholder="小区名称" value="${esc(state.piCommunity)}"></div>
+    <div class="inline-field"><span class="if-label">楼号</span><input id="f_piBuilding" placeholder="楼号/门牌号" value="${esc(state.piBuilding)}"></div>
+    <div class="inline-field"><span class="if-label">需要转网几张卡</span>
+      <select id="f_piCardCount">${['1','2','3'].map(v=>`<option value="${v}" ${state.piCardCount===v?'selected':''}>${v}张</option>`).join('')}</select>
+    </div>`;
+  } else {
+    h += `<div class="info-box">请携带好本人身份证原件，联系移动业务员去营业厅办理！</div>`;
+  }
+  h += `
+    ${renderCbGroup('piOperator',[{label:'电信用户',value:'telecom'},{label:'联通用户',value:'unicom'}], state.piOperator)}
+    <div id="piContractSection" class="${!state.piOperator?'hidden':''}">
+      <div class="section-title" style="font-size:15px;">原宽带合约套餐是否到期？</div>
+      ${renderCbGroup('piContractExpired',[{label:'是（已到期）',value:'yes'},{label:'否（未到期）',value:'no'}], state.piContractExpired===true?'yes':state.piContractExpired===false?'no':null)}
+      <div id="piExpiredYes" class="${state.piContractExpired===true?'':'hidden'}">
+        <div class="info-box">
+          <b>温馨提示：</b><br>1. 转网前请注销原运营商宽带：电信拨打10000，联通拨打10010<br>
+          2. 查询携转资格：发送<b>"SQXZ#姓名#身份证号"</b>至10001或10010<br>
+          3. 转网前请解绑主卡与副卡关系：电信拨打10000，联通拨打10010
+        </div>
+        <div id="piCardFields">${renderPiCardFields()}</div>
+        <div class="section-title" style="font-size:15px;">选择适合您的套餐</div>
+        ${renderBBWheels('piPlan','pi')}
+        <div id="piPlanDetail"></div>
+      </div>
+      <div id="piExpiredNo" class="${state.piContractExpired===false?'':'hidden'}">
+        <div class="form-row">
+          <div class="form-group"><label>合约到期时间：年</label><input id="f_piExpireYear" placeholder="如：2026" value="${state.piContractExpireDate?state.piContractExpireDate.split('-')[0]:''}"></div>
+          <div class="form-group"><label>月</label><input id="f_piExpireMonth" placeholder="如：12" value="${state.piContractExpireDate?state.piContractExpireDate.split('-')[1]:''}"></div>
+        </div>
+        <div class="warn-box"><b>温馨提示：</b><br>需等待合约到期，到期前1个月联系移动业务员登记转网。</div>
+      </div>
+    </div>
+  `;
+  return h;
+}
+
+function renderPiCardFields() {
+  const count = parseInt(state.piCardCount)||1;
+  let h = `<div class="inline-field"><span class="if-label">主卡号码（必填）</span><input id="f_piMainNumber" placeholder="主卡号码" value="${esc(state.piMainNumber)}"></div>`;
+  if (count>=2) h += `<div class="inline-field"><span class="if-label">副卡号码1（必填）</span><input id="f_piSubNumber1" placeholder="副卡号码1" value="${esc(state.piSubNumber1)}"></div>`;
+  if (count>=3) h += `<div class="inline-field"><span class="if-label">副卡号码 2（必填）</span><input id="f_piSubNumber2" placeholder="副卡号码2" value="${esc(state.piSubNumber2)}"></div>`;
+  h += `<div class="hint-box">提示：最多可携转2张副卡（加主卡，总共3张卡）</div>`;
+  return h;
+}
+
+function renderPiPlanDetail(plan) {
+  if (!plan || !plan.price) return '';
+  const baseData = plan.data + (state.piDataBoost||0);
+  const baseTalk = plan.talk + (state.piTalkBoost||0);
+  const finalPrice = plan.price + (state.piDataBoostPrice||0) + (state.piTalkBoostPrice||0);
+  let h = `<div class="expand-box">
+    <div class="ex-title">您选择的基础转网宽带套餐是：</div>
+    <div class="final-plan" style="font-weight:700;">${plan.name} | ${plan.speed}宽带 | ￥${plan.price}/月 | 流量：${plan.data}G | 通话：${plan.talk}分钟</div>
+    <div class="ex-title" style="margin-top:12px;">是否增加流量与通话扩容？</div>
+    ${renderCbGroup('piBoost',[{label:'是',value:'yes'},{label:'否',value:'no'}], (state.piDataBoost!==null||state.piTalkBoost!==null)?'yes':'no')}
+    <div id="piBoostContent">${(state.piDataBoost!==null||state.piTalkBoost!==null)?renderBoostContent('pi'):''}</div>`;
+  if (state.piDataBoost!==null||state.piTalkBoost!==null) {
+    h += `<div class="final-plan" style="margin-top:10px;font-weight:700;"><div class="fp-title">最终转网宽带套餐</div>
+      ${plan.name} | ${plan.speed}宽带 | ￥${finalPrice}/月 | 流量：${baseData}G | 通话：${baseTalk}分钟</div>`;
+  }
+  h += `</div>`;
+  return h;
+}
+
+// --- 扩容包内容 ---
+function renderBoostContent(prefix) {
+  return `
+    <div class="ex-title" style="margin-top:8px;">请选择扩容包</div>
+    <div style="font-size:13px;font-weight:600;color:#666;margin-bottom:4px;">流量扩容包：</div>
+    <div class="expand-options" id="${prefix}DataBoost">${DATA_BOOSTS.map((b,i)=>`<div class="expand-opt${(state[prefix+'DataBoostIdx']===i)?' active':''}" data-idx="${i}" data-prefix="${prefix}" data-type="data">${b.label}</div>`).join('')}
+      <div class="expand-opt${(state[prefix+'DataBoostIdx']===undefined||state[prefix+'DataBoostIdx']===null)?' active':''}" data-idx="" data-prefix="${prefix}" data-type="data">不扩容</div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:#666;margin-bottom:4px;">通话扩容包：</div>
+    <div class="expand-options" id="${prefix}TalkBoost">${TALK_BOOSTS.map((b,i)=>`<div class="expand-opt${(state[prefix+'TalkBoostIdx']===i)?' active':''}" data-idx="${i}" data-prefix="${prefix}" data-type="talk">${b.label}</div>`).join('')}
+      <div class="expand-opt${(state[prefix+'TalkBoostIdx']===undefined||state[prefix+'TalkBoostIdx']===null)?' active':''}" data-idx="" data-prefix="${prefix}" data-type="talk">不扩容</div>
+    </div>
+  `;
+}
+
+// --- 增加流量 ---
+function renderData() {
+  return `
+    <div class="section-title">📶 办理增加流量</div>
+    <div class="section-desc">回复短信即可办理，无需到营业厅</div>
+    <div class="info-box">增加流量只需回复短信即可办理，不需到营业厅办理。请填写以下信息，工作人员将为您处理。</div>
+    <div class="inline-field"><span class="if-label">手机号码</span><input id="f_daPhone" placeholder="请输入手机号码" value="${esc(state.daPhone)}"></div>
+    <div class="inline-field"><span class="if-label">身份证号码</span><input id="f_daIdCard" placeholder="请输入身份证号码" value="${esc(state.daIdCard)}"></div>
+  `;
+}
+
+// ==================== Step 2 事件绑定 ====================
+function bindStep2(c) {
+  // 方形勾选框
+  c.querySelectorAll('.cb-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const name = item.dataset.cb;
+      const val = item.dataset.val;
+      const group = c.querySelectorAll(`.cb-item[data-cb="${name}"]`);
+      group.forEach(x=>{ x.classList.remove('active'); x.querySelector('.cb-box').textContent=''; });
+      item.classList.add('active'); item.querySelector('.cb-box').textContent='✓';
+
+      if (name==='bbType') { state.bbType=val; refreshBBType(c); }
+      else if (name==='bbIsLocal') { state.bbIsLocal=val==='yes'; refreshBBLocal(c); }
+      else if (name==='bbMinFeeOk') { state.bbMinFeeOk=val==='yes'; refreshBBMinFee(c); }
+      else if (name==='piOperator') { state.piOperator=val; c.querySelector('#piContractSection').classList.remove('hidden'); }
+      else if (name==='piContractExpired') { state.piContractExpired=val==='yes'; refreshPiExpired(c); }
+      else if (name==='phoneBoost') { handleBoostToggle(c,'phone',val); }
+      else if (name==='bbBoost') { handleBoostToggle(c,'bb',val); }
+      else if (name==='piBoost') { handleBoostToggle(c,'pi',val); }
+    });
+  });
+
+  // 滚轮选择
+  const wheelGroups = [
+    ['bb500Wheel','bbFttrWheel','bbF3Wheel'],
+    ['bbA500Wheel','bbAFttrWheel','bbAF3Wheel'],
+    ['pi500Wheel','piFttrWheel','piF3Wheel'],
+    ['phonePlanWheel'],
+  ];
+  c.querySelectorAll('.wheel-item').forEach(item=>{
+    item.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const wid = item.dataset.wid;
+      const pid = item.dataset.pid;
+      // 更新当前选中态
+      const list = document.getElementById(wid+'List');
+      if (list) {
+        list.querySelectorAll('.wheel-item').forEach(x=>x.classList.remove('selected'));
+        item.classList.add('selected');
+        list.classList.remove('open');
+        const section = list.parentElement;
+        const label = section.querySelector('.wheel-selected-label');
+        if (label) label.textContent = '已选：'+item.textContent.trim();
+      }
+      // 清除同组其它滚轮的选中态和label
+      const myGroup = wheelGroups.find(g=>g.includes(wid));
+      if (myGroup) {
+        myGroup.filter(w=>w!==wid).forEach(w=>{
+          const otherList = document.getElementById(w+'List');
+          if (otherList) {
+            otherList.querySelectorAll('.wheel-item').forEach(x=>x.classList.remove('selected'));
+            const otherSection = otherList.parentElement;
+            const otherLabel = otherSection.querySelector('.wheel-selected-label');
+            if (otherLabel) otherLabel.textContent = '';
+          }
+        });
+      }
+      // 保存到state
+      const kbMap = {
+        'phonePlanWheel': 'phonePlan',
+        'bb500Wheel':'bbPlan','bbFttrWheel':'bbPlan','bbF3Wheel':'bbPlan',
+        'bbA500Wheel':'bbPlan','bbAFttrWheel':'bbPlan','bbAF3Wheel':'bbPlan',
+        'pi500Wheel':'piPlan','piFttrWheel':'piPlan','piF3Wheel':'piPlan',
+      };
+      const key = kbMap[wid];
+      if (key) {
+        if (key==='phonePlan') state.phonePlan = pid;
+        else if (key==='bbPlan') state.bbPlan = pid;
+        else if (key==='piPlan') state.piPlan = pid;
+        refreshPlanDetail(c);
+      }
+    });
+  });
+
+  // 携转卡数变化
+  const piCardSel = c.querySelector('#f_piCardCount');
+  if (piCardSel) {
+    piCardSel.addEventListener('change',()=>{
+      state.piCardCount = piCardSel.value;
+      const fields = c.querySelector('#piCardFields');
+      if (fields) fields.innerHTML = renderPiCardFields();
+    });
+  }
+
+  // 原套餐输入（加装）
+  const originInput = c.querySelector('#f_bbOriginPlan');
+  if (originInput) {
+    originInput.addEventListener('input',()=>{
+      state.bbOriginPlan = originInput.value;
+      refreshPlanDetail(c);
+    });
+  }
+
+  // 扩容包选择
+  c.querySelectorAll('.expand-opt').forEach(opt=>{
+    opt.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const prefix = opt.dataset.prefix;
+      const type = opt.dataset.type;
+      const idx = opt.dataset.idx===''?null:parseInt(opt.dataset.idx);
+      // 更新样式
+      const group = c.querySelectorAll(`.expand-opt[data-prefix="${prefix}"][data-type="${type}"]`);
+      group.forEach(x=>x.classList.remove('active'));
+      opt.classList.add('active');
+      // 保存
+      if (type==='data') { state[prefix+'DataBoostIdx']=idx; state[prefix+'DataBoost']=idx!==null?DATA_BOOSTS[idx].data:null; state[prefix+'DataBoostPrice']=idx!==null?DATA_BOOSTS[idx].price:null; }
+      else if (type==='talk') { state[prefix+'TalkBoostIdx']=idx; state[prefix+'TalkBoost']=idx!==null?TALK_BOOSTS[idx].talk:null; state[prefix+'TalkBoostPrice']=idx!==null?TALK_BOOSTS[idx].price:null; }
+      refreshPlanDetail(c);
+    });
+  });
+
+  // 关闭滚轮（点其他地方）
+  c.addEventListener('click',(e)=>{
+    if (!e.target.closest('.wheel-toggle') && !e.target.closest('.wheel-item')) {
+      c.querySelectorAll('.wheel-list.open').forEach(l=>l.classList.remove('open'));
+    }
+  });
+
+  refreshPlanDetail(c);
+}
+
+function refreshBBType(c) {
+  c.querySelector('#bbNewSection').classList.toggle('hidden', state.bbType!=='new');
+  c.querySelector('#bbAddonSection').classList.toggle('hidden', state.bbType!=='addon');
+}
+
+function refreshBBLocal(c) {
+  c.querySelector('#bbLocalYes').classList.toggle('hidden', state.bbIsLocal!==true);
+  c.querySelector('#bbLocalNo').classList.toggle('hidden', state.bbIsLocal!==false);
+}
+
+function refreshBBMinFee(c) {
+  c.querySelector('#bbMinFeeYes').classList.toggle('hidden', state.bbMinFeeOk!==true);
+  c.querySelector('#bbMinFeeNo').classList.toggle('hidden', state.bbMinFeeOk!==false);
+}
+
+function refreshPiExpired(c) {
+  c.querySelector('#piExpiredYes').classList.toggle('hidden', state.piContractExpired!==true);
+  c.querySelector('#piExpiredNo').classList.toggle('hidden', state.piContractExpired!==false);
+}
+
+function handleBoostToggle(c, prefix, val) {
+  const content = c.querySelector(`#${prefix}BoostContent`);
+  if (val==='yes') {
+    if (content) {
+      content.innerHTML = renderBoostContent(prefix);
+      bindBoostOpts(content, prefix, c);
+    }
+  } else {
+    state[prefix+'DataBoost']=null; state[prefix+'DataBoostIdx']=null; state[prefix+'DataBoostPrice']=null;
+    state[prefix+'TalkBoost']=null; state[prefix+'TalkBoostIdx']=null; state[prefix+'TalkBoostPrice']=null;
+    if (content) content.innerHTML = '';
+    refreshPlanDetail(c);
+  }
+}
+
+function bindBoostOpts(container, prefix, c) {
+  container.querySelectorAll('.expand-opt').forEach(opt=>{
+    opt.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const type = opt.dataset.type;
+      const idx = opt.dataset.idx===''?null:parseInt(opt.dataset.idx);
+      container.querySelectorAll(`.expand-opt[data-type="${type}"]`).forEach(x=>x.classList.remove('active'));
+      opt.classList.add('active');
+      if (type==='data') { state[prefix+'DataBoostIdx']=idx; state[prefix+'DataBoost']=idx!==null?DATA_BOOSTS[idx].data:null; state[prefix+'DataBoostPrice']=idx!==null?DATA_BOOSTS[idx].price:null; }
+      else if (type==='talk') { state[prefix+'TalkBoostIdx']=idx; state[prefix+'TalkBoost']=idx!==null?TALK_BOOSTS[idx].talk:null; state[prefix+'TalkBoostPrice']=idx!==null?TALK_BOOSTS[idx].price:null; }
+      refreshPlanDetail(c);
+    });
+  });
+}
+
+function refreshPlanDetail(c) {
+  // 手机套餐
+  const phoneDetail = c.querySelector('#phonePlanDetail');
+  if (phoneDetail && state.bizType==='phone') {
+    const plan = PHONE_PLANS.find(p=>p.id===state.phonePlan);
+    phoneDetail.innerHTML = renderPhonePlanDetail(plan);
+    bindNestedEvents(phoneDetail, 'phone', c);
+  }
+  // 新宽带套餐
+  const bbDetail = c.querySelector('#bbPlanDetail');
+  if (bbDetail && state.bizType==='broadband' && state.bbType==='new') {
+    const plan = [...BB_NEW_500M,...BB_NEW_FTTR,...BB_NEW_F3].find(p=>p.id===state.bbPlan);
+    bbDetail.innerHTML = renderBBPlanDetail(plan, 'bb');
+    bindNestedEvents(bbDetail, 'bb', c);
+  }
+  // 老号加装
+  const addonDetail = c.querySelector('#bbAddonPlanDetail');
+  if (addonDetail && state.bizType==='broadband' && state.bbType==='addon') {
+    const plan = [...BB_ADDON_500M,...BB_ADDON_FTTR,...BB_ADDON_F3].find(p=>p.id===state.bbPlan);
+    addonDetail.innerHTML = renderAddonPlanDetail(plan, 'bb');
+    bindNestedEvents(addonDetail, 'bb', c);
+  }
+  // 携转套餐
+  const piDetail = c.querySelector('#piPlanDetail');
+  if (piDetail && state.bizType==='portin') {
+    const plan = [...BB_NEW_500M,...BB_NEW_FTTR,...BB_NEW_F3].find(p=>p.id===state.piPlan);
+    piDetail.innerHTML = renderPiPlanDetail(plan);
+    bindNestedEvents(piDetail, 'pi', c);
+  }
+}
+
+function bindNestedEvents(container, prefix, c) {
+  if (!container) return;
+  container.querySelectorAll('.cb-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const name = item.dataset.cb;
+      const val = item.dataset.val;
+      container.querySelectorAll(`.cb-item[data-cb="${name}"]`).forEach(x=>{ x.classList.remove('active'); x.querySelector('.cb-box').textContent=''; });
+      item.classList.add('active'); item.querySelector('.cb-box').textContent='✓';
+      handleBoostToggle(c, prefix, val);
+    });
+  });
+  container.querySelectorAll('.expand-opt').forEach(opt=>{
+    opt.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const pfx = opt.dataset.prefix;
+      const type = opt.dataset.type;
+      const idx = opt.dataset.idx===''?null:parseInt(opt.dataset.idx);
+      container.querySelectorAll(`.expand-opt[data-prefix="${pfx}"][data-type="${type}"]`).forEach(x=>x.classList.remove('active'));
+      opt.classList.add('active');
+      if (type==='data') { state[pfx+'DataBoostIdx']=idx; state[pfx+'DataBoost']=idx!==null?DATA_BOOSTS[idx].data:null; state[pfx+'DataBoostPrice']=idx!==null?DATA_BOOSTS[idx].price:null; }
+      else if (type==='talk') { state[pfx+'TalkBoostIdx']=idx; state[pfx+'TalkBoost']=idx!==null?TALK_BOOSTS[idx].talk:null; state[pfx+'TalkBoostPrice']=idx!==null?TALK_BOOSTS[idx].price:null; }
+      refreshPlanDetail(c);
+    });
+  });
+}
+
+function parseOriginPlanPrice(raw) {
+  if (!raw||!raw.trim()) return 0;
+  const m = raw.trim().match(/(\d+)/);
+  return m?parseInt(m[1]):0;
+}
+
+// ==================== 保存 & 校验 ====================
+function saveStep2() {
+  if (state.bizType==='phone') {
+    state.phoneCommunity = document.getElementById('f_phoneCommunity')?.value||'';
+    state.phoneBuilding = document.getElementById('f_phoneBuilding')?.value||'';
+    state.phoneCardCount = document.getElementById('f_phoneCardCount')?.value||'1';
+  } else if (state.bizType==='broadband') {
+    state.bbCommunity = document.getElementById('f_bbCommunity')?.value||'';
+    state.bbBuilding = document.getElementById('f_bbBuilding')?.value||'';
+    state.bbCardCount = document.getElementById('f_bbCardCount')?.value||'1';
+    state.bbAddonNumber = document.getElementById('f_bbAddonNumber')?.value||'';
+    state.bbOriginPlan = document.getElementById('f_bbOriginPlan')?.value||'';
+  } else if (state.bizType==='portin') {
+    state.piCommunity = document.getElementById('f_piCommunity')?.value||'';
+    state.piBuilding = document.getElementById('f_piBuilding')?.value||'';
+    state.piCardCount = document.getElementById('f_piCardCount')?.value||'1';
+    if (state.piContractExpired===false) {
+      const y = document.getElementById('f_piExpireYear')?.value||'';
+      const m = document.getElementById('f_piExpireMonth')?.value||'';
+      state.piContractExpireDate = y&&m?`${y}-${m}`:'';
+    }
+    state.piMainNumber = document.getElementById('f_piMainNumber')?.value||'';
+    state.piSubNumber1 = document.getElementById('f_piSubNumber1')?.value||'';
+    state.piSubNumber2 = document.getElementById('f_piSubNumber2')?.value||'';
+  } else if (state.bizType==='data') {
+    state.daPhone = document.getElementById('f_daPhone')?.value||'';
+    state.daIdCard = document.getElementById('f_daIdCard')?.value||'';
+  }
+}
+
+function validateAndNext() {
+  saveStep2();
+  if (state.bizType==='phone' && !state.phonePlan) { alert('请选择手机套餐'); return; }
+  if (state.bizType==='broadband') {
+    if (!state.bbType) { alert('请选择宽带类型'); return; }
+    if (state.bbType==='addon') {
+      if (state.bbIsLocal===null) { alert('请选择号码归属地'); return; }
+      if (state.bbIsLocal===false) { alert('非咸阳归属地，无法办理宽带'); return; }
+      if (state.bbMinFeeOk===null) { alert('请确认每月最低资费'); return; }
+      if (state.bbMinFeeOk===false) { alert('无法办理，请选择新宽带'); return; }
+    }
+    if (!state.bbPlan) { alert('请选择宽带套餐'); return; }
+  }
+  if (state.bizType==='portin') {
+    if (!state.piOperator) { alert('请选择原运营商'); return; }
+    if (state.piContractExpired===null) { alert('请选择合约是否到期'); return; }
+    if (state.piContractExpired===true) {
+      if (!state.piMainNumber) { alert('请填写主卡号码'); return; }
+      const cnt = parseInt(state.piCardCount)||1;
+      if (cnt>=2 && !state.piSubNumber1) { alert('请填写副卡号码1'); return; }
+      if (cnt>=3 && !state.piSubNumber2) { alert('请填写副卡号码2'); return; }
+      if (!state.piPlan) { alert('请选择套餐'); return; }
+    }
+  }
+  if (state.bizType==='data') {
+    if (!state.daPhone) { alert('请填写手机号码'); return; }
+    if (!state.daIdCard) { alert('请填写身份证号码'); return; }
+  }
+  state.step=3; render();
+}
+
+// ==================== Step 3: 汇总 ====================
+function renderStep3(c,b) {
+  c.innerHTML = `
+    <div class="section-title">✅ 信息填写完成</div>
+    <div class="section-desc">点击下方按钮查看业务办理汇总卡片</div>
+    <div style="text-align:center;padding:40px 0;">
+      <div style="font-size:64px;margin-bottom:16px;">📋</div>
+      <button class="btn btn-submit" onclick="showSummaryOverlay()" style="font-size:16px;padding:14px 40px;">📋 查看业务办理汇总卡片</button>
+    </div>
+  `;
+  b.innerHTML = `<button class="btn btn-back" onclick="state.step=2;render()">← 返回修改</button>`;
+  showSummaryOverlay();
+}
+
+function showSummaryOverlay() {
+  document.getElementById('summaryBody').innerHTML = buildSummary();
+  document.getElementById('summaryOverlay').classList.add('show');
+}
+function closeSummary() { document.getElementById('summaryOverlay').classList.remove('show'); }
+
+function buildSummary() {
+  let rows = [];
+  const bizLabels = { phone:'办理新手机卡', broadband:'办理宽带', portin:'办理携号转网', data:'办理增加流量' };
+  rows.push(`<div class="summary-row"><span class="label">业务类型</span><span class="value">${bizLabels[state.bizType]}</span></div>`);
+  rows.push(`<div class="summary-row"><span class="label">日期</span><span class="value">${nowDateStr()}</span></div>`);
+  if (state.bizType!=='data') rows.push(`<div class="summary-row"><span class="label">是否上门</span><span class="value">${state.isOnsite==='yes'?'是（上门办理）':'否（自行前往）'}</span></div>`);
+
+  if (state.bizType==='phone') {
+    rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.phoneCommunity||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.phoneBuilding||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">办卡数量</span><span class="value">${state.phoneCardCount}张</span></div>`);
+    const p = PHONE_PLANS.find(x=>x.id===state.phonePlan);
+    if (p) {
+      const fdata = p.data+(state.phoneDataBoost||0);
+      const ftalk = p.talk+(state.phoneTalkBoost||0);
+      const fprice = p.price+(state.phoneDataBoostPrice||0)+(state.phoneTalkBoostPrice||0);
+      const hasBoost = state.phoneDataBoost||state.phoneTalkBoost;
+      rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${p.name} | ￥${p.price}/月 | 流量：${p.data}G | 通话：${p.talk}分钟</span></div>`);
+      if (hasBoost) {
+        if (state.phoneDataBoost) rows.push(`<div class="summary-row"><span class="label">流量扩容</span><span class="value">+${state.phoneDataBoost}G（+￥${state.phoneDataBoostPrice}/月）</span></div>`);
+        if (state.phoneTalkBoost) rows.push(`<div class="summary-row"><span class="label">通话扩容</span><span class="value">+${state.phoneTalkBoost}分钟（+￥${state.phoneTalkBoostPrice}/月）</span></div>`);
+        rows.push(`<div class="plan-detail" style="font-weight:700;color:#c62828;">最终手机套餐：${p.name} | ￥${fprice}/月 | 流量：${fdata}G | 通话：${ftalk}分钟</div>`);
+      }
+    }
+  }
+
+  if (state.bizType==='broadband') {
+    if (state.isOnsite==='yes') {
+      rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.bbCommunity||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.bbBuilding||'未填写'}</span></div>`);
+      if (state.bbType==='new') rows.push(`<div class="summary-row"><span class="label">办卡数量</span><span class="value">${state.bbCardCount||'1'}张</span></div>`);
+    }
+    rows.push(`<div class="summary-row"><span class="label">宽带类型</span><span class="value">${state.bbType==='new'?'办理新宽带':'老号码加装宽带'}</span></div>`);
+    if (state.bbType==='addon') {
+      rows.push(`<div class="summary-row"><span class="label">号码归属</span><span class="value">${state.bbIsLocal?'咸阳归属地':'非咸阳（无法办理）'}</span></div>`);
+      if (state.bbIsLocal) {
+        rows.push(`<div class="summary-row"><span class="label">号码</span><span class="value">${state.bbAddonNumber||'未填写'}</span></div>`);
+        rows.push(`<div class="summary-row"><span class="label">月费≥39元</span><span class="value">${state.bbMinFeeOk?'是':'否'}</span></div>`);
+        if (state.bbMinFeeOk && state.bbOriginPlan) rows.push(`<div class="summary-row"><span class="label">原手机套餐</span><span class="value">${state.bbOriginPlan}</span></div>`);
+      }
+    }
+    const allBB = [...BB_NEW_500M,...BB_NEW_FTTR,...BB_NEW_F3,...BB_ADDON_500M,...BB_ADDON_FTTR,...BB_ADDON_F3];
+    const plan = allBB.find(p=>p.id===state.bbPlan);
+    if (plan) {
+      if (plan.price) {
+        const fdata = plan.data+(state.bbDataBoost||0);
+        const ftalk = plan.talk+(state.bbTalkBoost||0);
+        const fprice = plan.price+(state.bbDataBoostPrice||0)+(state.bbTalkBoostPrice||0);
+        const hasBoost = state.bbDataBoost||state.bbTalkBoost;
+        rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${plan.name} | ${plan.speed}宽带 | ￥${plan.price}/月 | 流量：${plan.data}G | 通话：${plan.talk}分钟</span></div>`);
+        if (hasBoost) {
+          if (state.bbDataBoost) rows.push(`<div class="summary-row"><span class="label">流量扩容</span><span class="value">+${state.bbDataBoost}G（+￥${state.bbDataBoostPrice}/月）</span></div>`);
+          if (state.bbTalkBoost) rows.push(`<div class="summary-row"><span class="label">通话扩容</span><span class="value">+${state.bbTalkBoost}分钟（+￥${state.bbTalkBoostPrice}/月）</span></div>`);
+          rows.push(`<div class="plan-detail" style="font-weight:700;color:#c62828;">最终宽带套餐：${plan.name} | ${plan.speed}宽带 | ￥${fprice}/月 | 流量：${fdata}G | 通话：${ftalk}分钟</div>`);
+        }
+      } else if (plan.addon!==undefined) {
+        const op = parseOriginPlanPrice(state.bbOriginPlan);
+        const total = op>0?op+plan.addon:null;
+        rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${plan.name} | ${plan.speed} | ${op>0?op:'原套餐'}+￥${plan.addon}/月${total?' = ￥'+total+'/月':''}</span></div>`);
+      }
+    }
+  }
+
+  if (state.bizType==='portin') {
+    if (state.isOnsite==='yes') {
+      rows.push(`<div class="summary-row"><span class="label">小区名称</span><span class="value">${state.piCommunity||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">楼号</span><span class="value">${state.piBuilding||'未填写'}</span></div>`);
+      rows.push(`<div class="summary-row"><span class="label">转网卡数</span><span class="value">${state.piCardCount}张</span></div>`);
+    }
+    rows.push(`<div class="summary-row"><span class="label">原运营商</span><span class="value">${state.piOperator==='telecom'?'电信':'联通'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">合约状态</span><span class="value">${state.piContractExpired?'已到期':'未到期'}</span></div>`);
+    if (!state.piContractExpired) rows.push(`<div class="summary-row"><span class="label">合约到期</span><span class="value">${state.piContractExpireDate||'未填写'}</span></div>`);
+    if (state.piContractExpired) {
+      rows.push(`<div class="summary-row"><span class="label">主卡号码（必填）</span><span class="value">${state.piMainNumber||'未填写'}</span></div>`);
+      if (parseInt(state.piCardCount)>=2) rows.push(`<div class="summary-row"><span class="label">副卡号码1（必填）</span><span class="value">${state.piSubNumber1||'未填写'}</span></div>`);
+      if (parseInt(state.piCardCount)>=3) rows.push(`<div class="summary-row"><span class="label">副卡号码 2（必填）</span><span class="value">${state.piSubNumber2||'未填写'}</span></div>`);
+      const plan = [...BB_NEW_500M,...BB_NEW_FTTR,...BB_NEW_F3].find(p=>p.id===state.piPlan);
+      if (plan) {
+        const fdata = plan.data+(state.piDataBoost||0);
+        const ftalk = plan.talk+(state.piTalkBoost||0);
+        const fprice = plan.price+(state.piDataBoostPrice||0)+(state.piTalkBoostPrice||0);
+        const hasBoost = state.piDataBoost||state.piTalkBoost;
+        rows.push(`<div class="summary-row"><span class="label">选择套餐</span><span class="value">${plan.name} | ${plan.speed}宽带 | ￥${plan.price}/月 | 流量：${plan.data}G | 通话：${plan.talk}分钟</span></div>`);
+        if (hasBoost) {
+          if (state.piDataBoost) rows.push(`<div class="summary-row"><span class="label">流量扩容</span><span class="value">+${state.piDataBoost}G（+￥${state.piDataBoostPrice}/月）</span></div>`);
+          if (state.piTalkBoost) rows.push(`<div class="summary-row"><span class="label">通话扩容</span><span class="value">+${state.piTalkBoost}分钟（+￥${state.piTalkBoostPrice}/月）</span></div>`);
+          rows.push(`<div class="plan-detail" style="font-weight:700;color:#c62828;">最终转网宽带套餐：${plan.name} | ${plan.speed}宽带 | ￥${fprice}/月 | 流量：${fdata}G | 通话：${ftalk}分钟</div>`);
+        }
+      }
+    }
+  }
+
+  if (state.bizType==='data') {
+    rows.push(`<div class="summary-row"><span class="label">手机号码</span><span class="value">${state.daPhone||'未填写'}</span></div>`);
+    rows.push(`<div class="summary-row"><span class="label">身份证号</span><span class="value">${state.daIdCard||'未填写'}</span></div>`);
+  }
+  return rows.join('');
+}
+
+function confirmSubmit() {
+  closeSummary();
+  alert('业务办理信息已提交！\n\n工作人员将尽快与您联系，请保持电话畅通。\n\n如有疑问请拨打10086咨询。');
+  state = initState();
+  render();
+}
+
+function nextStep() {
+  if (!state.bizType) { alert('请选择业务类型'); return; }
+  if (state.isOnsite===null && state.bizType!=='data') { alert('请选择是否上门办理'); return; }
+  state.step=2; render();
+}
+
+render();
+</script>
+</body>
+</html>
